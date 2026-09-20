@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户登录 / 注册</title>
+    <link rel="stylesheet" href="css/register.css">
+</head>
+<body>
+<div class="page-bg"></div>
+
+<div class="register-container">
+    <div class="register-card">
+        <!-- 选项卡：注册 / 登录 -->
+        <div class="tab-header">
+            <button type="button" class="tab-btn active" id="tabRegister">注 册</button>
+            <button type="button" class="tab-btn" id="tabLogin">登 录</button>
+        </div>
+
+        <!-- ================= 注册面板 ================= -->
+        <div class="tab-panel" id="panelRegister">
+            <h1 class="card-title">用户注册</h1>
+            <p class="card-subtitle">填写以下信息，数据将保存到 cxh_sql 数据库</p>
+
+            <form id="registerForm" action="../web/jsp/register.jsp" method="post" novalidate>
+                <!-- 用户名 -->
+                <div class="form-group">
+                    <label for="username">用户名 <span class="required">*</span></label>
+                    <input type="text" id="username" name="username"
+                           placeholder="3~16位字母、数字或下划线" autocomplete="off">
+                    <span class="error-tip" id="usernameError"></span>
+                </div>
+
+                <!-- 邮箱 -->
+                <div class="form-group">
+                    <label for="email">邮箱 <span class="required">*</span></label>
+                    <input type="email" id="email" name="email"
+                           placeholder="example@domain.com" autocomplete="off">
+                    <span class="error-tip" id="emailError"></span>
+                </div>
+
+                <!-- 密码 -->
+                <div class="form-group">
+                    <label for="password">密码 <span class="required">*</span></label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" name="password"
+                               placeholder="8~20位，需包含字母和数字" autocomplete="off">
+                        <button type="button" class="toggle-pwd" id="togglePwd"
+                                aria-label="显示或隐藏密码">👁</button>
+                    </div>
+                    <!-- 密码强度提示条 -->
+                    <div class="strength-bar" id="strengthBar" hidden>
+                        <span class="strength-seg"></span>
+                        <span class="strength-seg"></span>
+                        <span class="strength-seg"></span>
+                    </div>
+                    <span class="strength-text" id="strengthText"></span>
+                    <span class="error-tip" id="passwordError"></span>
+                </div>
+
+                <!-- 确认密码 -->
+                <div class="form-group">
+                    <label for="confirmPwd">确认密码 <span class="required">*</span></label>
+                    <div class="password-wrapper">
+                        <input type="password" id="confirmPwd" name="confirmPwd"
+                               placeholder="请再次输入密码" autocomplete="off">
+                        <button type="button" class="toggle-pwd" id="toggleConfirmPwd"
+                                aria-label="显示或隐藏密码">👁</button>
+                    </div>
+                    <span class="error-tip" id="confirmError"></span>
+                </div>
+
+                <!-- 图形验证码 -->
+                <div class="form-group">
+                    <label for="captcha">验证码 <span class="required">*</span></label>
+                    <div class="captcha-wrapper">
+                        <input type="text" id="captcha" name="captcha"
+                               placeholder="请输入右侧字符" autocomplete="off">
+                        <canvas id="captchaCanvas" width="110" height="40"
+                                title="看不清？点击刷新"></canvas>
+                    </div>
+                    <span class="error-tip" id="captchaError"></span>
+                </div>
+
+                <!-- 手机号（选填，动态显示/隐藏） -->
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="bindPhone"> 同时绑定手机号（选填）
+                    </label>
+                </div>
+                <div class="form-group" id="phoneGroup" hidden>
+                    <label for="phone">手机号</label>
+                    <input type="tel" id="phone" name="phone"
+                           placeholder="11位手机号" autocomplete="off">
+                    <span class="error-tip" id="phoneError"></span>
+                </div>
+
+                <!-- 同意协议 -->
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="agree">
+                        我已阅读并同意 <a href="javascript:void(0)" id="agreementLink">《用户注册协议》</a>
+                    </label>
+                    <span class="error-tip" id="agreeError"></span>
+                </div>
+
+                <!-- 提交按钮 -->
+                <button type="submit" class="submit-btn" id="submitBtn">注 册</button>
+            </form>
+        </div>
+
+        <!-- ================= 登录面板 ================= -->
+        <div class="tab-panel" id="panelLogin" hidden>
+            <h1 class="card-title">用户登录</h1>
+            <p class="card-subtitle">使用已注册的账号登录</p>
+
+            <form id="loginForm" action="../web/jsp/login.jsp" method="post" novalidate>
+                <!-- 账号 -->
+                <div class="form-group">
+                    <label for="account">账号 <span class="required">*</span></label>
+                    <input type="text" id="account" name="account"
+                           placeholder="请输入注册的账号" autocomplete="off">
+                    <span class="error-tip" id="accountError"></span>
+                </div>
+
+                <!-- 密码 -->
+                <div class="form-group">
+                    <label for="loginPwd">密码 <span class="required">*</span></label>
+                    <div class="password-wrapper">
+                        <input type="password" id="loginPwd" name="password"
+                               placeholder="请输入密码" autocomplete="off">
+                        <button type="button" class="toggle-pwd" id="toggleLoginPwd"
+                                aria-label="显示或隐藏密码">👁</button>
+                    </div>
+                    <span class="error-tip" id="loginPwdError"></span>
+                </div>
+
+                <!-- 提交按钮 -->
+                <button type="submit" class="submit-btn">登 录</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="register.js"></script>
+</body>
+</html>
