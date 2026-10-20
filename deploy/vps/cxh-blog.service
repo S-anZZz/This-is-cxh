@@ -1,0 +1,39 @@
+[Unit]
+Description=cxh 个人博客（Spring Boot）
+Documentation=https://github.com/S-anZZz/This-is-cxh
+After=network-online.target mysql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=cxh
+Group=cxh
+WorkingDirectory=/opt/cxh-blog
+EnvironmentFile=/etc/cxh-blog/cxh-blog.env
+# 注意：systemd 会按空白拆分 $JAVA_OPTS，因此变量里不要放引号
+ExecStart=/usr/bin/java $JAVA_OPTS -jar /opt/cxh-blog/cxh-blog.jar
+SuccessExitStatus=143
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=30s
+
+# ---------- 安全加固 ----------
+# 只允许写数据目录与上传目录；其余文件系统只读
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/cxh-blog/uploads /opt/cxh-blog/data
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictRealtime=true
+# 数据落盘用不到这些能力
+CapabilityBoundingSet=
+# 内存上限，避免异常时把机器拖垮（可按机器规格调整）
+MemoryMax=1G
+
+[Install]
+WantedBy=multi-user.target

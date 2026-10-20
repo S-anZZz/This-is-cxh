@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/admin :: head('概览')}"></head>
+<body>
+<div class="admin-shell">
+    <aside th:replace="~{layout/admin :: sidebar(${activeNav})}"></aside>
+
+    <main class="admin-main">
+        <div class="page-head">
+            <div>
+                <h1>概览</h1>
+                <p>今天想写点什么？</p>
+            </div>
+            <div class="actions">
+                <a class="btn" th:href="@{/admin/posts/new}">写新文章</a>
+                <a class="btn btn--ghost" th:href="@{/admin/appearance}">编辑风格</a>
+            </div>
+        </div>
+
+        <div th:replace="~{layout/admin :: flash}"></div>
+
+        <section class="stats">
+            <div class="stat"><span>文章总数</span><strong th:text="${stats.total()}">0</strong></div>
+            <div class="stat"><span>已发布</span><strong th:text="${stats.published()}">0</strong></div>
+            <div class="stat"><span>草稿</span><strong th:text="${stats.drafts()}">0</strong></div>
+            <div class="stat"><span>累计浏览</span><strong th:text="${stats.views()}">0</strong></div>
+        </section>
+
+        <section class="card">
+            <h2>当前外观</h2>
+            <p>
+                预置主题：<strong th:text="${currentTheme}">简约白</strong>
+                <span class="muted small" th:if="${site.updatedAtText != ''}"
+                      th:text="|· 最近更新 ${site.updatedAtText}|"></span>
+            </p>
+            <p class="muted small">
+                风格由 <code>/theme.css</code> 实时生成：改完保存即全站生效，无需重新构建或重启。
+            </p>
+            <p><a class="btn btn--ghost" th:href="@{/admin/appearance}">进入外观设置</a></p>
+        </section>
+
+        <section class="card">
+            <h2>最近更新</h2>
+            <table class="table" th:if="${!recentPosts.isEmpty()}">
+                <thead>
+                <tr><th>标题</th><th>状态</th><th>更新</th><th></th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="post : ${recentPosts}">
+                    <td th:text="${post.title}">标题</td>
+                    <td>
+                        <span class="badge" th:classappend="${post.draft} ? 'badge--draft' : 'badge--published'"
+                              th:text="${post.statusLabel}">草稿</span>
+                    </td>
+                    <td class="muted small" th:text="${post.updatedAtText}">2024-01-01</td>
+                    <td class="actions">
+                        <a class="btn btn--ghost btn--sm"
+                           th:href="@{/admin/posts/{id}/edit(id=${post.id})}">编辑</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="empty" th:if="${recentPosts.isEmpty()}">还没有文章，点右上角「写新文章」开始。</div>
+        </section>
+
+        <section class="card">
+            <h2>三步上手</h2>
+            <ol class="muted" style="margin:0;padding-left:1.2em;">
+                <li><a th:href="@{/admin/appearance}">外观设置</a>：选预置主题，或自由调整颜色、字体、字号、圆角；右侧预览实时刷新。</li>
+                <li>改「站点身份」与「简介」，保存后立刻出现在首页与关于页。</li>
+                <li>需要更深的改造时，在页面底部的「自定义 CSS」里直接写样式。</li>
+            </ol>
+        </section>
+    </main>
+</div>
+</body>
+</html>

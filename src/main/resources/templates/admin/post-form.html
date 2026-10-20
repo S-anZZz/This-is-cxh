@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/admin :: head('编辑文章')}"></head>
+<body>
+<div class="admin-shell">
+    <aside th:replace="~{layout/admin :: sidebar(${activeNav})}"></aside>
+
+    <main class="admin-main">
+        <div class="page-head">
+            <div>
+                <h1 th:text="${form.new} ? '写新文章' : '编辑文章'">编辑文章</h1>
+                <p>支持 Markdown，右侧可实时预览渲染结果。</p>
+            </div>
+            <a class="btn btn--ghost" th:href="@{/admin/posts}">返回列表</a>
+        </div>
+
+        <!-- th:object 让所有字段自动取值与回显校验错误 -->
+        <form th:action="@{/admin/posts}" th:object="${form}" method="post" id="post-form"
+              th:attr="data-preview-url=@{/admin/posts/preview}">
+            <input type="hidden" th:field="*{id}"/>
+
+            <section class="card">
+                <div class="form-grid">
+                    <div class="field">
+                        <label for="title">标题</label>
+                        <input type="text" id="title" th:field="*{title}" placeholder="给这篇文章起个名字"/>
+                        <span class="error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">错误</span>
+                    </div>
+
+                    <div class="form-grid form-grid--2">
+                        <div class="field">
+                            <label for="slug">链接标识</label>
+                            <input type="text" id="slug" th:field="*{slug}" placeholder="留空则按标题自动生成"/>
+                            <span class="hint" th:text="|访问地址：/posts/${form.slug ?: '自动生成'}|">/posts/slug</span>
+                            <span class="error" th:if="${#fields.hasErrors('slug')}" th:errors="*{slug}">错误</span>
+                        </div>
+                        <div class="field">
+                            <label for="status">状态</label>
+                            <select id="status" th:field="*{status}">
+                                <option th:each="s : ${allStatuses}" th:value="${s}" th:text="${s.label}">已发布</option>
+                            </select>
+                            <span class="error" th:if="${#fields.hasErrors('status')}" th:errors="*{status}">错误</span>
+                        </div>
+                    </div>
+
+                    <div class="form-grid form-grid--2">
+                        <div class="field">
+                            <label for="tagsText">标签</label>
+                            <input type="text" id="tagsText" th:field="*{tagsText}" placeholder="Spring Boot、架构（逗号或顿号分隔，最多 8 个）"/>
+                            <span class="error" th:if="${#fields.hasErrors('tagsText')}" th:errors="*{tagsText}">错误</span>
+                        </div>
+                        <div class="field">
+                            <label for="coverImageUrl">封面图地址</label>
+                            <input type="text" id="coverImageUrl" th:field="*{coverImageUrl}" placeholder="https://... （可留空）"/>
+                            <span class="error" th:if="${#fields.hasErrors('coverImageUrl')}" th:errors="*{coverImageUrl}">错误</span>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="summary">摘要</label>
+                        <textarea id="summary" th:field="*{summary}" rows="2"
+                                  placeholder="列表页展示的一句话摘要，留空则自动截取正文"></textarea>
+                        <span class="error" th:if="${#fields.hasErrors('summary')}" th:errors="*{summary}">错误</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>正文（Markdown）</h2>
+                <div class="form-grid">
+                    <!-- 图片上传：成功后把 Markdown 插到光标处，无需手工拼路径 -->
+                    <div class="upload-row">
+                        <label class="btn btn--ghost btn--sm" for="image-upload">插入图片</label>
+                        <input type="file" id="image-upload" accept="image/jpeg,image/png,image/gif,image/webp"
+                               hidden="hidden" th:attr="data-upload-url=@{/api/media/images}"/>
+                        <span class="muted small" id="upload-status">
+                            支持 jpeg / png / gif / webp，单张不超过 8MB；上传后自动插入图文 Markdown。
+                        </span>
+                    </div>
+                    <textarea id="contentMarkdown" th:field="*{contentMarkdown}" rows="18" class="code"
+                              placeholder="# 标题&#10;&#10;正文支持 **加粗**、`代码`、表格、引用与代码块。"></textarea>
+                    <span class="error" th:if="${#fields.hasErrors('contentMarkdown')}"
+                          th:errors="*{contentMarkdown}">错误</span>
+                    <div class="muted small" id="markdown-status">输入正文后会自动显示渲染预览。</div>
+                    <div class="markdown-preview" id="markdown-preview" hidden="hidden"></div>
+                </div>
+            </section>
+
+            <div class="form-actions">
+                <button class="btn" type="submit">保存文章</button>
+                <a class="btn btn--ghost" th:href="@{/admin/posts}">取消</a>
+                <span class="muted small" th:if="${!form.new}">保存后如为「已发布」，公开页面立即更新。</span>
+            </div>
+        </form>
+
+        <th:block th:if="${!form.new}">
+            <form th:action="@{/admin/posts/{id}/delete(id=${form.id})}" method="post"
+                  data-confirm="确定要删除这篇文章吗？此操作不可撤销。">
+                <button class="btn btn--danger" type="submit">删除这篇文章</button>
+            </form>
+        </th:block>
+    </main>
+</div>
+
+<script th:src="@{/js/admin-confirm.js}" defer="defer"></script>
+<script th:src="@{/js/markdown-preview.js}" defer="defer"></script>
+<script th:src="@{/js/image-upload.js}" defer="defer"></script>
+</body>
+</html>

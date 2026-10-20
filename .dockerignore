@@ -1,0 +1,13 @@
+# 构建镜像时不需要的文件，避免把构建缓存与本地运行数据打进上下文
+target/
+data/
+.git/
+.gitignore
+.idea/
+.vscode/
+docs/
+README.md
+*.log
+.DS_Store
+docker-compose.yml
+Dockerfile

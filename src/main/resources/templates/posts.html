@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head(${pageTitle})}"></head>
+<body>
+<header th:replace="~{layout/base :: header}"></header>
+
+<main class="container">
+    <div class="section-title">
+        <h2 th:text="${pageTitle}">全部文章</h2>
+        <a th:if="${currentTag != null}" th:href="@{/tags}">← 返回标签</a>
+    </div>
+
+    <div class="post-list">
+        <th:block th:each="post : ${pageResult.items}">
+            <article th:replace="~{layout/base :: postCard(${post})}"></article>
+        </th:block>
+    </div>
+
+    <div class="empty-state" th:if="${pageResult.isEmpty()}">
+        这里还没有文章。
+    </div>
+
+    <th:block th:if="${pageResult.totalPages > 1}">
+        <nav th:replace="~{layout/base :: pagination(${pageResult}, ${currentTag})}"></nav>
+    </th:block>
+
+    <th:block th:if="${currentTag == null and tags != null and !tags.isEmpty()}">
+        <div class="section-title"><h2>按标签浏览</h2></div>
+        <div class="tag-cloud">
+            <a class="tag" th:each="tag : ${tags}" th:href="@{/tags/{t}(t=${tag})}" th:text="${tag}">标签</a>
+        </div>
+    </th:block>
+</main>
+
+<footer th:replace="~{layout/base :: footer}"></footer>
+<th:block th:replace="~{layout/base :: scripts}"></th:block>
+</body>
+</html>

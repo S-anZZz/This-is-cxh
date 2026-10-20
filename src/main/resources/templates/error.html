@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- 错误页可能拿不到站点档案（异常处理器不经过 GlobalModelAdvice），
+         因此用安全导航加 Elvis 兜底。注意：兜底运算符必须整体写在 ${} 内，
+         若写成字面量替换（竖线语法）里的裸运算符，会被原样输出到页面。 -->
+    <title th:text="${'出错了 · ' + (site?.siteTitle ?: 'cxh 的博客')}">出错了</title>
+    <link rel="icon" type="image/svg+xml" th:href="@{/images/favicon.svg}"/>
+    <!-- 与前台保持一致：兜底值在前，真实主题在后，保证风格覆盖生效 -->
+    <link rel="stylesheet" th:href="@{/css/blog.css}"/>
+    <link rel="stylesheet" th:href="@{/theme.css}"/>
+</head>
+<body>
+<main class="container">
+    <section class="error-page">
+        <h1 th:text="${status} ?: 500">500</h1>
+        <p th:text="${message} ?: '请求处理失败，请稍后再试。'">出错了</p>
+
+        <div class="empty-state" th:if="${details != null and !details.isEmpty()}">
+            <ul style="text-align:left;margin:0;padding-left:1.2em;">
+                <li th:each="entry : ${details}">
+                    <code th:text="${entry.key}">field</code> —— <span th:text="${entry.value}">message</span>
+                </li>
+            </ul>
+        </div>
+
+        <p>
+            <a th:href="@{/}">返回首页</a> ·
+            <a th:href="@{/posts}">浏览文章</a>
+        </p>
+    </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,31 @@
+# MySQL 环境：java -jar cxh-blog.jar --spring.profiles.active=mysql
+# 所有连接参数都可用环境变量覆盖，便于容器化部署。
+#
+# 注意 characterEncoding 必须是 Java 字符集名（UTF-8），不能写 utf8mb4 ——
+# Connector/J 会直接报 "Unsupported character encoding 'utf8mb4'" 并拒绝连接。
+# 真正的 utf8mb4 由服务端与建库语句保证（见 README 的建库 SQL）。
+spring:
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:cxh_blog}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+
+  jpa:
+    hibernate:
+      # 结构变更一律走 Flyway 迁移脚本，Hibernate 只校验
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.MySQLDialect
+    open-in-view: false
+
+  # 生产不使用 H2 控制台
+  h2:
+    console:
+      enabled: false
+
+  thymeleaf:
+    cache: true
+
+cxh:
+  seed:
+    enabled: false

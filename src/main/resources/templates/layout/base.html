@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<!--
+  站点公共骨架。所有片段只消费 --cxh-* CSS 变量与站点读模型（${site.*}），
+  不包含任何具体色值 —— 换风格时无需改动这里的任何一行。
+-->
+<head th:fragment="head(pageTitle)">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="|${pageTitle} · ${site.siteTitle}|">cxh 的博客</title>
+    <meta name="description" th:content="${site.siteSubtitle}"/>
+    <meta name="author" th:content="${site.authorName}"/>
+    <link rel="icon" type="image/svg+xml" th:href="@{/images/favicon.svg}"/>
+    <link rel="alternate" type="application/rss+xml" title="RSS 订阅" th:href="@{/feed.xml}"/>
+    <!--
+      级联顺序很重要：blog.css 先加载（提供 --cxh-* 的兜底值），
+      theme.css 后加载（按当前风格覆盖兜底值），最后的预览挂载点优先级最高。
+      顺序写反会导致编辑后的风格被兜底值盖掉。
+    -->
+    <link rel="stylesheet" th:href="@{/css/blog.css}"/>
+    <link id="cxh-theme-css" rel="stylesheet" th:href="@{/theme.css}"/>
+    <!-- 外观编辑器的实时预览挂载点（普通访客看到的是空标签） -->
+    <style id="cxh-theme-preview"></style>
+</head>
+
+<body>
+
+<header class="site-header" th:fragment="header">
+    <div class="container site-header__inner">
+        <a class="brand" th:href="@{/}">
+            <span class="brand__mark" th:text="${#strings.substring(site.authorName,0,1)}">c</span>
+            <span class="brand__text">
+                <strong th:text="${site.siteTitle}">cxh 的博客</strong>
+                <small th:if="${site.siteSubtitle != null}" th:text="${site.siteSubtitle}">记录与思考</small>
+            </span>
+        </a>
+        <nav class="site-nav">
+            <a th:href="@{/}" th:classappend="${activeNav == 'home'} ? 'active'">首页</a>
+            <a th:href="@{/posts}" th:classappend="${activeNav == 'posts'} ? 'active'">文章</a>
+            <a th:href="@{/archive}" th:classappend="${activeNav == 'archive'} ? 'active'">归档</a>
+            <a th:href="@{/tags}" th:classappend="${activeNav == 'tags'} ? 'active'">标签</a>
+            <a th:href="@{/search}" th:classappend="${activeNav == 'search'} ? 'active'">搜索</a>
+            <a th:href="@{/about}" th:classappend="${activeNav == 'about'} ? 'active'">关于</a>
+            <a class="site-nav__admin" th:href="@{/admin}">后台</a>
+        </nav>
+    </div>
+</header>
+
+<footer class="site-footer" th:fragment="footer">
+    <div class="container site-footer__inner">
+        <div>
+            <p th:text="${site.footerText} ?: ${site.copyright()}">© cxh</p>
+            <p class="muted" th:if="${site.hasContact()}">
+                <span th:if="${site.location != null}" th:text="${site.location}">城市</span>
+                <a th:if="${site.email != null}" th:href="|mailto:${site.email}|" th:text="${site.email}">mail</a>
+                <a th:if="${site.githubUrl != null}" th:href="${site.githubUrl}" target="_blank" rel="noopener">GitHub</a>
+            </p>
+            <p class="muted" th:if="${site.icpNumber != null}" th:text="${site.icpNumber}">备案号</p>
+        </div>
+        <p class="muted small">
+            由 <strong>Spring Boot</strong> 驱动 ·
+            <a th:href="@{/feed.xml}">RSS</a> ·
+            <a th:href="@{/sitemap.xml}">Sitemap</a> ·
+            <a th:href="@{/theme.css}">theme.css</a>
+        </p>
+    </div>
+</footer>
+
+<!-- 文章卡片：首页、列表页、标签页共用，避免三处重复 -->
+<article class="post-card" th:fragment="postCard(post)">
+    <div class="post-card__meta">
+        <time th:text="${post.publishedAtText}">2024-01-01</time>
+        <span th:each="tag : ${post.tags}" class="tag" th:text="${tag}">标签</span>
+    </div>
+    <h2 class="post-card__title">
+        <a th:href="@{/posts/{slug}(slug=${post.slug})}" th:text="${post.title}">标题</a>
+    </h2>
+    <p class="post-card__summary" th:text="${post.summary}">摘要</p>
+    <div class="post-card__foot">
+        <span th:text="|${post.readingMinutes} 分钟阅读|">5 分钟阅读</span>
+        <span th:text="|${post.views} 次浏览|">12 次浏览</span>
+        <span class="tag" th:if="${post.coverImageUrl != null}">含封面</span>
+    </div>
+</article>
+
+<!-- 分页：列表页共用。链接由页面按自身路由生成，保持模板与路由解耦 -->
+<nav class="pagination" th:fragment="pagination(pageResult, currentTag)">
+    <a th:if="${pageResult.hasPrevious()}"
+       th:href="${currentTag == null} ? @{/posts(page=${pageResult.page - 1})} : @{/tags/{t}(t=${currentTag},page=${pageResult.page - 1})}">← 上一页</a>
+    <span class="pagination__info"
+          th:text="|第 ${pageResult.page + 1} / ${pageResult.totalPages == 0 ? 1 : pageResult.totalPages} 页 · 共 ${pageResult.total} 篇|">第 1 页</span>
+    <a th:if="${pageResult.hasNext()}"
+       th:href="${currentTag == null} ? @{/posts(page=${pageResult.page + 1})} : @{/tags/{t}(t=${currentTag},page=${pageResult.page + 1})}">下一页 →</a>
+</nav>
+
+<th:block th:fragment="scripts">
+    <script th:src="@{/js/blog.js}" defer></script>
+</th:block>
+
+</body>
+</html>

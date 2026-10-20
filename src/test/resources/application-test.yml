@@ -1,0 +1,35 @@
+# 测试环境：内存库，关闭演示数据，保证测试可重复、互不污染
+# 表结构由 Flyway 的 h2 迁移脚本创建，Hibernate 只做校验 ——
+# 因此每次跑测试都在顺带验证建表脚本与实体的映射是否一致。
+spring:
+  datasource:
+    url: jdbc:h2:mem:cxh-test;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  h2:
+    console:
+      enabled: false
+  thymeleaf:
+    cache: false
+
+cxh:
+  admin:
+    username: admin
+    password: test-password
+  seed:
+    enabled: false
+  media:
+    # 上传测试必须写临时目录，否则会把图片落到工作区（曾经污染过仓库）
+    location: ${java.io.tmpdir}/cxh-blog-test-uploads
+    url-prefix: /uploads
+    thumbnail-size: 200
+
+logging:
+  level:
+    root: WARN
+    com.cxh.blog: INFO

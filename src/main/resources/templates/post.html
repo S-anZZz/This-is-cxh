@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head(${post.title})}"></head>
+<body>
+<header th:replace="~{layout/base :: header}"></header>
+
+<main class="container">
+    <article class="article">
+        <header class="article__header">
+            <div class="article__meta">
+                <time th:text="${post.publishedAtText}">2024-01-01</time>
+                <span th:text="|${post.readingMinutes} 分钟阅读|">5 分钟阅读</span>
+                <span th:text="|${post.views} 次浏览|">10 次浏览</span>
+            </div>
+            <h1 class="article__title" th:text="${post.title}">标题</h1>
+            <div class="tag-cloud">
+                <a class="tag" th:each="tag : ${post.tags}" th:href="@{/tags/{t}(t=${tag})}" th:text="${tag}">标签</a>
+            </div>
+        </header>
+
+        <img class="article__cover" th:if="${post.coverImageUrl != null}"
+             th:src="${post.coverImageUrl}" th:alt="${post.title}"/>
+
+        <!-- 正文 HTML 由 MarkdownRenderer 生成并已转义原始 HTML -->
+        <div class="article__body prose" th:utext="${post.contentHtml}">正文</div>
+
+        <hr/>
+        <p class="muted small">
+            最后更新：<span th:text="${post.updatedAtText}">2024-01-01</span>
+            · 觉得有用？欢迎通过页脚的方式联系我。
+        </p>
+        <p><a th:href="@{/posts}">← 返回文章列表</a></p>
+    </article>
+</main>
+
+<footer th:replace="~{layout/base :: footer}"></footer>
+<th:block th:replace="~{layout/base :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/admin :: head('登录')}"></head>
+<body class="login-page">
+<div class="login-card">
+    <h1 th:text="${site?.siteTitle} ?: 'cxh 的博客'">cxh 的博客</h1>
+    <p class="sub">登录后可以编辑文章、站点风格与简介</p>
+
+    <div class="flash" th:if="${loginError}">账号或密码不正确，请重试。</div>
+    <div class="flash" th:if="${loggedOut}">已安全退出。</div>
+
+    <!-- 表单动作指向 Spring Security 的登录处理地址，隐藏的 CSRF 字段由框架自动注入 -->
+    <form th:action="@{/login}" method="post" class="form-grid">
+        <div class="field">
+            <label for="username">账号</label>
+            <input type="text" id="username" name="username" autocomplete="username" autofocus="autofocus"/>
+        </div>
+        <div class="field">
+            <label for="password">密码</label>
+            <input type="password" id="password" name="password" autocomplete="current-password"/>
+        </div>
+        <button class="btn btn--block" type="submit">登录</button>
+    </form>
+
+    <p class="small muted" style="margin-top:16px;">
+        默认账号 <code>admin</code> / 密码 <code>cxh@2024</code>，
+        可用环境变量 <code>CXH_ADMIN_USERNAME</code>、<code>CXH_ADMIN_PASSWORD</code> 覆盖。
+    </p>
+</div>
+</body>
+</html>

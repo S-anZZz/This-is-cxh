@@ -1,0 +1,28 @@
+target/
+!.mvn/wrapper/maven-wrapper.properties
+
+# 运行时数据（H2 文件库、上传的图片）
+data/
+uploads/
+backups/
+deploy/.env
+*.mv.db
+*.trace.db
+
+# 日志
+*.log
+logs/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+
+# 系统
+.DS_Store
+Thumbs.db

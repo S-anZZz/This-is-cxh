@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head('首页')}"></head>
+<body>
+<header th:replace="~{layout/base :: header}"></header>
+
+<main class="container">
+    <!-- Hero 的显隐由主题令牌控制，模板不做任何样式判断 -->
+    <th:block th:if="${site.theme.showHero}">
+        <section class="hero">
+            <img class="hero__avatar" th:if="${site.hasAvatar()}" th:src="${site.authorAvatarUrl}"
+                 th:alt="|${site.authorName} 的头像|"/>
+            <h1 class="hero__title" th:text="${site.siteTitle}">cxh 的博客</h1>
+            <p class="hero__subtitle" th:if="${site.siteSubtitle != null}" th:text="${site.siteSubtitle}">记录</p>
+            <div class="hero__intro prose" th:if="${site.hasIntro()}" th:utext="${site.introHtml}">简介</div>
+        </section>
+    </th:block>
+
+    <div class="section-title">
+        <h2>最新文章</h2>
+        <a th:href="@{/posts}">全部 →</a>
+    </div>
+
+    <div class="post-list">
+        <th:block th:each="post : ${recentPosts}">
+            <article th:replace="~{layout/base :: postCard(${post})}"></article>
+        </th:block>
+    </div>
+    <div class="empty-state" th:if="${recentPosts.isEmpty()}">
+        还没有发布的文章。登录后台 <a th:href="@{/admin}">/admin</a> 写下第一篇。
+    </div>
+
+    <th:block th:if="${!tags.isEmpty()}">
+        <div class="section-title">
+            <h2>标签</h2>
+            <a th:href="@{/tags}">全部 →</a>
+        </div>
+        <div class="tag-cloud">
+            <a class="tag" th:each="tag : ${tags}" th:href="@{/tags/{t}(t=${tag})}" th:text="${tag}">标签</a>
+        </div>
+    </th:block>
+</main>
+
+<footer th:replace="~{layout/base :: footer}"></footer>
+<th:block th:replace="~{layout/base :: scripts}"></th:block>
+</body>
+</html>

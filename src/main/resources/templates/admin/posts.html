@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/admin :: head('文章管理')}"></head>
+<body>
+<div class="admin-shell">
+    <aside th:replace="~{layout/admin :: sidebar(${activeNav})}"></aside>
+
+    <main class="admin-main">
+        <div class="page-head">
+            <div>
+                <h1>文章管理</h1>
+                <p th:text="|共 ${stats.total()} 篇 · 已发布 ${stats.published()} · 草稿 ${stats.drafts()} · 累计浏览 ${stats.views()}|">共 0 篇</p>
+            </div>
+            <a class="btn" th:href="@{/admin/posts/new}">写新文章</a>
+        </div>
+
+        <div th:replace="~{layout/admin :: flash}"></div>
+
+        <div class="filters">
+            <a th:href="@{/admin/posts}" th:classappend="${currentStatus == null} ? 'active'">全部</a>
+            <a th:each="s : ${allStatuses}"
+               th:href="@{/admin/posts(status=${s})}"
+               th:classappend="${currentStatus == s} ? 'active'"
+               th:text="${s.label}">已发布</a>
+        </div>
+
+        <section class="card">
+            <table class="table" th:if="${!pageResult.isEmpty()}">
+                <thead>
+                <tr>
+                    <th style="width:38%;">标题</th>
+                    <th>状态</th>
+                    <th>标签</th>
+                    <th>更新</th>
+                    <th>浏览</th>
+                    <th style="width:150px;">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="post : ${pageResult.items}">
+                    <td>
+                        <a th:href="@{/admin/posts/{id}/edit(id=${post.id})}" th:text="${post.title}">标题</a>
+                        <div class="muted small" th:text="|/${post.slug}|">/slug</div>
+                    </td>
+                    <td>
+                        <span class="badge" th:classappend="${post.draft} ? 'badge--draft' : 'badge--published'"
+                              th:text="${post.statusLabel}">草稿</span>
+                    </td>
+                    <td>
+                        <div class="chips">
+                            <span class="chip" th:each="tag : ${post.tags}" th:text="${tag}">标签</span>
+                        </div>
+                    </td>
+                    <td class="muted small" th:text="${post.updatedAtText}">2024-01-01</td>
+                    <td class="muted small" th:text="${post.views}">0</td>
+                    <td>
+                        <div class="actions">
+                            <a class="btn btn--ghost btn--sm"
+                               th:href="@{/admin/posts/{id}/edit(id=${post.id})}">编辑</a>
+                            <a class="btn btn--ghost btn--sm" th:if="${!post.draft}"
+                               th:href="@{/posts/{slug}(slug=${post.slug})}" target="_blank" rel="noopener">查看</a>
+                            <form th:action="@{/admin/posts/{id}/delete(id=${post.id})}" method="post"
+                                  data-confirm="确定要删除这篇文章吗？此操作不可撤销。">
+                                <button class="btn btn--danger btn--sm" type="submit">删除</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="empty" th:if="${pageResult.isEmpty()}">这个筛选条件下还没有文章。</div>
+
+            <th:block th:if="${pageResult.totalPages > 1}">
+                <div class="filters" style="margin:16px 0 0;">
+                    <a th:if="${pageResult.hasPrevious()}"
+                       th:href="@{/admin/posts(page=${pageResult.page - 1}, status=${currentStatus})}">← 上一页</a>
+                    <span class="muted small" style="padding:5px 4px;"
+                          th:text="|第 ${pageResult.page + 1} / ${pageResult.totalPages} 页|">第 1 页</span>
+                    <a th:if="${pageResult.hasNext()}"
+                       th:href="@{/admin/posts(page=${pageResult.page + 1}, status=${currentStatus})}">下一页 →</a>
+                </div>
+            </th:block>
+        </section>
+    </main>
+</div>
+
+<script th:src="@{/js/admin-confirm.js}" defer="defer"></script>
+</body>
+</html>

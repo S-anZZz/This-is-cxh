@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head('搜索')}"></head>
+<body>
+<header th:replace="~{layout/base :: header}"></header>
+
+<main class="container">
+    <div class="section-title">
+        <h2>搜索</h2>
+        <span class="muted small" th:if="${!keyword.isEmpty()}"
+              th:text="|关键词「${keyword}」|">关键词</span>
+    </div>
+
+    <form class="search-form" th:action="@{/search}" method="get" role="search">
+        <input type="text" name="q" th:value="${keyword}" maxlength="60"
+               placeholder="搜索标题、摘要与正文…" aria-label="搜索关键词"/>
+        <button type="submit">搜索</button>
+    </form>
+
+    <th:block th:if="${!keyword.isEmpty()}">
+        <p class="muted small" th:text="|找到 ${pageResult.total} 篇相关文章|">找到 0 篇</p>
+
+        <div class="post-list">
+            <th:block th:each="post : ${pageResult.items}">
+                <article th:replace="~{layout/base :: postCard(${post})}"></article>
+            </th:block>
+        </div>
+
+        <div class="empty-state" th:if="${pageResult.isEmpty()}">
+            没有匹配「<span th:text="${keyword}">关键词</span>」的文章，换个词试试？
+        </div>
+
+        <!-- 搜索分页需要带上关键词，因此在页面内单独生成链接 -->
+        <nav class="pagination" th:if="${pageResult.totalPages > 1}">
+            <a th:if="${pageResult.hasPrevious()}"
+               th:href="@{/search(q=${keyword}, page=${pageResult.page - 1})}">← 上一页</a>
+            <span class="pagination__info"
+                  th:text="|第 ${pageResult.page + 1} / ${pageResult.totalPages} 页|">第 1 页</span>
+            <a th:if="${pageResult.hasNext()}"
+               th:href="@{/search(q=${keyword}, page=${pageResult.page + 1})}">下一页 →</a>
+        </nav>
+    </th:block>
+
+    <p class="muted small" th:if="${keyword.isEmpty()}">
+        输入关键词开始检索。搜索范围是已发布文章的标题、摘要与正文，草稿不会被检索到。
+    </p>
+</main>
+
+<footer th:replace="~{layout/base :: footer}"></footer>
+<th:block th:replace="~{layout/base :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head('关于')}"></head>
+<body>
+<header th:replace="~{layout/base :: header}"></header>
+
+<main class="container">
+    <section class="hero">
+        <img class="hero__avatar hero__avatar--lg" th:if="${site.hasAvatar()}" th:src="${site.authorAvatarUrl}"
+             th:alt="|${site.authorName} 的头像|"/>
+        <h1 class="hero__title" th:text="|关于 ${site.authorName}|">关于</h1>
+        <p class="hero__subtitle" th:if="${site.siteSubtitle != null}" th:text="${site.siteSubtitle}">副标题</p>
+    </section>
+
+    <div class="hero__intro prose" th:if="${site.hasIntro()}" th:utext="${site.introHtml}">简介</div>
+    <div class="empty-state" th:unless="${site.hasIntro()}">
+        还没有填写简介。登录后台的「外观设置」里可以随时编辑，并立即生效。
+    </div>
+
+    <div class="section-title"><h2>联系</h2></div>
+    <ul class="archive-list">
+        <li th:if="${site.location != null}"><span>所在地</span><span th:text="${site.location}">城市</span></li>
+        <li th:if="${site.email != null}"><span>邮箱</span><a th:href="|mailto:${site.email}|" th:text="${site.email}">mail</a></li>
+        <li th:if="${site.githubUrl != null}"><span>GitHub</span>
+            <a th:href="${site.githubUrl}" target="_blank" rel="noopener" th:text="${site.githubUrl}">link</a></li>
+        <li th:if="${!site.hasContact()}"><span>暂未填写联系方式</span><span></span></li>
+    </ul>
+</main>
+
+<footer th:replace="~{layout/base :: footer}"></footer>
+<th:block th:replace="~{layout/base :: scripts}"></th:block>
+</body>
+</html>

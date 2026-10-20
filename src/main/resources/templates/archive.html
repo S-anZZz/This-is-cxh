@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head('归档')}"></head>
+<body>
+<header th:replace="~{layout/base :: header}"></header>
+
+<main class="container">
+    <div class="section-title">
+        <h2>归档</h2>
+        <span class="muted small" th:text="|共 ${total} 篇|">共 0 篇</span>
+    </div>
+
+    <!-- 分组逻辑在 HomeController 完成，模板只负责渲染 -->
+    <section class="archive-group" th:each="group : ${groups}">
+        <h2 th:text="|${group.year} 年|">2024 年</h2>
+        <ul class="archive-list">
+            <li th:each="post : ${group.posts}">
+                <a th:href="@{/posts/{slug}(slug=${post.slug})}" th:text="${post.title}">标题</a>
+                <time th:text="${post.publishedAtText}">2024-01-01</time>
+            </li>
+        </ul>
+    </section>
+
+    <div class="empty-state" th:if="${groups.isEmpty()}">还没有可归档的文章。</div>
+</main>
+
+<footer th:replace="~{layout/base :: footer}"></footer>
+<th:block th:replace="~{layout/base :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head('标签')}"></head>
+<body>
+<header th:replace="~{layout/base :: header}"></header>
+
+<main class="container">
+    <div class="section-title">
+        <h2>全部标签</h2>
+        <span class="muted small" th:text="|共 ${tags.size()} 个|">共 0 个</span>
+    </div>
+
+    <div class="tag-cloud" th:if="${!tags.isEmpty()}">
+        <a class="tag" th:each="tag : ${tags}" th:href="@{/tags/{t}(t=${tag})}" th:text="${tag}">标签</a>
+    </div>
+    <div class="empty-state" th:if="${tags.isEmpty()}">还没有任何标签，发布文章时填写标签即可。</div>
+</main>
+
+<footer th:replace="~{layout/base :: footer}"></footer>
+<th:block th:replace="~{layout/base :: scripts}"></th:block>
+</body>
+</html>

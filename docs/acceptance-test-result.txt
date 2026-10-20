@@ -1,0 +1,136 @@
+启动应用：/Users/san/IJidea/CXHMJ-proweb/cxhmj/target/cxh-blog.jar （端口 18195，临时数据目录 /var/folders/2l/zxxy4k6d4_g2ztz9nhblb_v80000gn/T//cxh-acceptance.NeOYJL/data）
+应用已就绪（PID 37116）
+
+=== A. 公开页面渲染 ===
+A01    首页 200                                   PASS  期望 200，实际 200
+A02    首页含站点标题                        PASS  命中
+A03    首页含最新文章区                     PASS  命中
+A04    首页仅引用兜底样式在先            PASS  命中
+A05    文章列表 200                             PASS  期望 200，实际 200
+A06    列表超页码不报错                     PASS  期望 200，实际 200
+A07    列表负数页码被夹取                  PASS  期望 200，实际 200
+A08    标签页 200                                PASS  期望 200，实际 200
+A09    归档页 200                                PASS  期望 200，实际 200
+A10    关于页 200                                PASS  期望 200，实际 200
+A11    搜索页 200                                PASS  期望 200，实际 200
+A12    搜索命中已发布文章                  PASS  命中
+A13    搜索未命中给空态                     PASS  命中
+A14    通配符 % 不应全表命中               PASS  期望 200，实际 200
+A15    通配符 % 返回空态                     PASS  命中
+A16    关键词被 HTML 转义                     PASS  未出现
+A17    静态样式表 200                          PASS  期望 200，实际 200
+A18    前台脚本 200                             PASS  期望 200，实际 200
+A19    图标可访问                              PASS  命中
+A20    文章详情渲染 Markdown（%E8%A1%A8%E6%83%85%E5%8C%85%E4%B8%8E%E6%95%B4%E6%B4%BB） PASS  命中
+
+=== B. 主题样式表（风格可编辑的核心通道） ===
+B01    theme.css 内容类型正确                 PASS  Content-Type 含 text/css
+B02    theme.css 禁止缓存                       PASS  Cache-Control 含 no-store
+B03    含主色变量                              PASS  命中
+B04    含排版变量                              PASS  命中
+B05    含派生圆角变量                        PASS  命中
+
+=== C. 订阅与站点地图 ===
+C01    feed.xml 200                                 PASS  期望 200，实际 200
+C02    feed 内容类型                            PASS  Content-Type 含 application/rss+xml
+C03    sitemap.xml 200                              PASS  期望 200，实际 200
+C04    robots.txt 200                               PASS  期望 200，实际 200
+C05    robots 指向 sitemap                        PASS  命中
+C06    robots 屏蔽后台                          PASS  命中
+C07    feed 是良构 XML                           PASS  解析通过
+C08    sitemap 是良构 XML                        PASS  解析通过
+
+=== D. 鉴权与安全基线 ===
+D01    未登录访问后台被重定向            PASS  期望 302，实际 302
+D02    未登录访问外观页被重定向         PASS  期望 302，实际 302
+D03    未登录访问文章管理被重定向      PASS  期望 302，实际 302
+D04    健康检查公开                           PASS  期望 200，实际 200
+D05    非公开 actuator 端点被拒              PASS  期望 302，实际 302
+D06    白名单外的路径被默认拒绝         PASS  期望 302，实际 302
+D07    不存在的文章 404                       PASS  期望 404，实际 404
+D08    POST 无 CSRF 令牌被拒                   PASS  期望 403，实际 403
+D09    PUT 无 CSRF 令牌被拒                    PASS  期望 403，实际 403
+D10    X-Content-Type-Options                       PASS  X-Content-Type-Options 含 nosniff
+D11    X-Frame-Options                              PASS  X-Frame-Options 含 SAMEORIGIN
+D12    内容安全策略存在                     PASS  Content-Security-Policy 含 default-src 'self'
+D13    CSP 禁止内联脚本                       PASS  Content-Security-Policy 含 script-src 'self'
+D14    错误响应为 JSON（Accept）             PASS  命中
+
+=== E. 登录流程 ===
+E01    登录页含 CSRF 隐藏域                  PASS  命中
+E02    错误密码不通过                        PASS  期望 302，实际 302
+E03    错误密码给出提示                     PASS  命中
+E04    正确密码登录成功                     PASS  期望 302，实际 302
+E05    登录后可见后台概览                  PASS  命中
+
+=== F. 后台文章管理 ===
+F01    文章列表页 200                          PASS  期望 200，实际 200
+F02    按状态筛选 200                          PASS  期望 200，实际 200
+F03    新建页 200                                PASS  期望 200，实际 200
+F04    保存并重定向                           PASS  期望 302，实际 302
+F05    新文章出现在前台列表               PASS  命中
+F06    新文章可搜索到                        PASS  命中
+F07    保存草稿                                 PASS  期望 302，实际 302
+F08    草稿不进公开列表                     PASS  未出现
+F09    草稿搜不到（返回空态）            PASS  命中
+F10    草稿在后台可见                        PASS  命中
+F11    标题为空被拦下                        PASS  期望 200，实际 200
+F12    标题校验提示可见                     PASS  命中
+F13    Markdown 预览接口可用                  PASS  命中
+F14    预览接口需要登录                     PASS  期望 302，实际 302
+
+=== G. 外观自由编辑（本项目核心功能） ===
+G01    编辑页含取色器                        PASS  命中
+G02    编辑页含预置主题卡片               PASS  命中
+G03    编辑页含实时预览框                  PASS  命中
+G04    编辑页含自定义 CSS                    PASS  命中
+G05    非法颜色被校验拦下                  PASS  期望 200，实际 200
+G06    非法颜色给出提示                     PASS  命中
+G07    保存合法外观                           PASS  期望 302，实际 302
+G08    样式表立即反映新主色               PASS  命中
+G09    样式表立即反映新字号               PASS  命中
+G10    自定义 CSS 已注入                      PASS  命中
+G11    首页立即反映新站名                  PASS  命中
+G12    关于页立即反映新简介               PASS  命中
+G13    预览接口不写库仍可用               PASS  期望 200，实际 200
+G14    预览未污染已保存风格               PASS  未出现
+G15    一键套用预置主题                     PASS  期望 302，实际 302
+G16    预置主题换了配色                     PASS  命中
+G17    预置主题同时换字体                  PASS  命中
+G18    预置主题列表接口                     PASS  期望 200，实际 200
+
+=== H. 异常与边界输入（缺陷回归） ===
+H01    非法枚举参数返回 400                 PASS  期望 400，实际 400
+H02    非法路径变量返回 400                 PASS  期望 400，实际 400
+H03    非法分页参数返回 400                 PASS  期望 400，实际 400
+H04    只允许 POST 的地址发 GET 返回 405   PASS  期望 405，实际 405
+H05    不存在的文章编辑页 404              PASS  期望 404，实际 404
+H06    错误页标题不含未解析表达式      PASS  未出现
+H07    错误页标题不含 null                   PASS  未出现
+H08    绑定失败给出中文提示               PASS  命中
+H09    超长正文被校验拦下                  PASS  命中
+H10    后台模板无内联事件处理器         PASS  未出现
+H11    删除确认走外部脚本                  PASS  命中
+
+=== J. 图片上传（新增能力） ===
+J01    未登录不能上传（CSRF 先拒）       PASS  期望 403，实际 403
+J02    已登录但无 CSRF 被拒                  PASS  期望 403，实际 403
+J03    上传成功并返回元数据               PASS  命中
+J04    返回可粘贴的相册 Markdown            PASS  命中
+J05    上传的图片可公开访问               PASS  期望 200，实际 200
+J06    缩略图可公开访问                     PASS  期望 200，实际 200
+J07    伪造图片内容被拒绝                  PASS  期望 400，实际 400
+J08    伪造内容返回可读提示               PASS  命中
+
+=== I. 数据完整性 ===
+I01    搜索结果可定位到文章               PASS  命中
+I02    文章详情渲染 Markdown 标题           PASS  命中
+I03    详情页显示阅读量与时长            PASS  命中
+I04    sitemap 收录新文章                      PASS  命中
+I05    feed 收录新文章                         PASS  命中
+I06    登出接口可用                           PASS  期望 302，实际 302
+I07    登出后后台不可访问                  PASS  期望 302，实际 302
+
+──────────────────────────────────────────────
+用例总数：110    通过：110    失败：0
+全部通过 ✅

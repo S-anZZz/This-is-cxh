@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/admin :: head('外观设置')}"></head>
+<body>
+<div class="admin-shell">
+    <aside th:replace="~{layout/admin :: sidebar(${activeNav})}"></aside>
+
+    <main class="admin-main">
+        <div class="page-head">
+            <div>
+                <h1>外观设置</h1>
+                <p>站点身份、简介与整站风格都在这里编辑；右侧是真实首页的实时预览。</p>
+            </div>
+            <a class="btn btn--ghost" th:href="@{/}" target="_blank" rel="noopener">打开站点 ↗</a>
+        </div>
+
+        <div th:replace="~{layout/admin :: flash}"></div>
+
+        <div class="appearance-grid">
+            <!-- 左侧：编辑区 -->
+            <div>
+                <section class="card">
+                    <h2>预置主题</h2>
+                    <p class="muted small">点一下立即套用整套配色与字体（会直接保存）。</p>
+                    <div class="preset-picker">
+                        <form th:each="p : ${presetOptions}"
+                              th:action="@{/admin/appearance/preset}" method="post">
+                            <input type="hidden" name="preset" th:value="${p.preset}"/>
+                            <button class="preset-card" type="submit"
+                                    th:classappend="${p.preset == form.preset.name()} ? 'active'"
+                                    th:title="|套用「${p.label}」|">
+                                <span class="swatches">
+                                    <i th:style="|background:${p.primaryColor}|"></i>
+                                    <i th:style="|background:${p.accentColor}|"></i>
+                                    <i th:style="|background:${p.pageBackground}|"></i>
+                                    <i th:style="|background:${p.surfaceBackground}|"></i>
+                                    <i th:style="|background:${p.textColor}|"></i>
+                                </span>
+                                <span th:text="${p.label}">简约白</span>
+                                <small th:text="${p.dark} ? '深色底' : '浅色底'">浅色底</small>
+                            </button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- 主编辑表单：右侧预览拦截所有输入事件，实时渲染 -->
+                <form id="appearance-form" th:action="@{/admin/appearance}" th:object="${form}" method="post"
+                      th:attr="data-preview-url=@{/admin/appearance/preview}">
+
+                    <section class="card">
+                        <h2>站点身份</h2>
+                        <div class="form-grid form-grid--2">
+                            <div class="field">
+                                <label for="siteTitle">站点标题</label>
+                                <input type="text" id="siteTitle" th:field="*{siteTitle}"/>
+                                <span class="error" th:if="${#fields.hasErrors('siteTitle')}" th:errors="*{siteTitle}">错误</span>
+                            </div>
+                            <div class="field">
+                                <label for="siteSubtitle">副标题</label>
+                                <input type="text" id="siteSubtitle" th:field="*{siteSubtitle}"/>
+                                <span class="error" th:if="${#fields.hasErrors('siteSubtitle')}" th:errors="*{siteSubtitle}">错误</span>
+                            </div>
+                            <div class="field">
+                                <label for="authorName">作者名</label>
+                                <input type="text" id="authorName" th:field="*{authorName}"/>
+                                <span class="error" th:if="${#fields.hasErrors('authorName')}" th:errors="*{authorName}">错误</span>
+                            </div>
+                            <div class="field">
+                                <label for="authorAvatarUrl">头像地址</label>
+                                <input type="text" id="authorAvatarUrl" th:field="*{authorAvatarUrl}" placeholder="可留空"/>
+                                <span class="error" th:if="${#fields.hasErrors('authorAvatarUrl')}" th:errors="*{authorAvatarUrl}">错误</span>
+                            </div>
+                            <div class="field">
+                                <label for="location">所在地</label>
+                                <input type="text" id="location" th:field="*{location}" placeholder="例如：杭州"/>
+                                <span class="error" th:if="${#fields.hasErrors('location')}" th:errors="*{location}">错误</span>
+                            </div>
+                            <div class="field">
+                                <label for="email">邮箱</label>
+                                <input type="text" id="email" th:field="*{email}" placeholder="you@example.com"/>
+                                <span class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">错误</span>
+                            </div>
+                            <div class="field">
+                                <label for="githubUrl">GitHub 地址</label>
+                                <input type="text" id="githubUrl" th:field="*{githubUrl}" placeholder="https://github.com/..."/>
+                                <span class="error" th:if="${#fields.hasErrors('githubUrl')}" th:errors="*{githubUrl}">错误</span>
+                            </div>
+                            <div class="field">
+                                <label for="icpNumber">备案号</label>
+                                <input type="text" id="icpNumber" th:field="*{icpNumber}" placeholder="可留空"/>
+                                <span class="error" th:if="${#fields.hasErrors('icpNumber')}" th:errors="*{icpNumber}">错误</span>
+                            </div>
+                            <div class="field">
+                                <label for="footerText">页脚文字</label>
+                                <input type="text" id="footerText" th:field="*{footerText}" placeholder="留空则显示默认版权信息"/>
+                                <span class="error" th:if="${#fields.hasErrors('footerText')}" th:errors="*{footerText}">错误</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="card">
+                        <h2>简介</h2>
+                        <div class="field">
+                            <label for="introMarkdown">Markdown 简介（显示在首页与关于页）</label>
+                            <textarea id="introMarkdown" th:field="*{introMarkdown}" rows="10" class="code"
+                                      placeholder="## 你好&#10;&#10;这里是自我介绍……"></textarea>
+                            <span class="hint">支持 Markdown；原始 HTML 会被转义，样式请写在「自定义 CSS」中。</span>
+                            <span class="error" th:if="${#fields.hasErrors('introMarkdown')}" th:errors="*{introMarkdown}">错误</span>
+                        </div>
+                    </section>
+
+                    <section class="card">
+                        <h2>风格令牌</h2>
+                        <div class="form-grid">
+                            <div class="field">
+                                <label for="preset">基准预置（仅作为记录与兜底）</label>
+                                <select id="preset" th:field="*{preset}">
+                                    <option th:each="p : ${presetOptions}" th:value="${p.preset}" th:text="${p.label}">简约白</option>
+                                </select>
+                            </div>
+
+                            <div class="form-grid form-grid--2">
+                                <div class="field">
+                                    <label for="primaryColor">主色</label>
+                                    <div class="color-row">
+                                        <input type="color" id="primaryColor" th:field="*{primaryColor}"/>
+                                        <output th:for="primaryColor" th:text="*{primaryColor}">#2563eb</output>
+                                    </div>
+                                    <span class="error" th:if="${#fields.hasErrors('primaryColor')}" th:errors="*{primaryColor}">错误</span>
+                                </div>
+                                <div class="field">
+                                    <label for="accentColor">辅助色</label>
+                                    <div class="color-row">
+                                        <input type="color" id="accentColor" th:field="*{accentColor}"/>
+                                        <output th:for="accentColor" th:text="*{accentColor}">#7c3aed</output>
+                                    </div>
+                                    <span class="error" th:if="${#fields.hasErrors('accentColor')}" th:errors="*{accentColor}">错误</span>
+                                </div>
+                                <div class="field">
+                                    <label for="pageBackground">页面背景色</label>
+                                    <div class="color-row">
+                                        <input type="color" id="pageBackground" th:field="*{pageBackground}"/>
+                                        <output th:for="pageBackground" th:text="*{pageBackground}">#f7f8fa</output>
+                                    </div>
+                                    <span class="error" th:if="${#fields.hasErrors('pageBackground')}" th:errors="*{pageBackground}">错误</span>
+                                </div>
+                                <div class="field">
+                                    <label for="surfaceBackground">卡片背景色</label>
+                                    <div class="color-row">
+                                        <input type="color" id="surfaceBackground" th:field="*{surfaceBackground}"/>
+                                        <output th:for="surfaceBackground" th:text="*{surfaceBackground}">#ffffff</output>
+                                    </div>
+                                    <span class="error" th:if="${#fields.hasErrors('surfaceBackground')}" th:errors="*{surfaceBackground}">错误</span>
+                                </div>
+                                <div class="field">
+                                    <label for="textColor">正文字色</label>
+                                    <div class="color-row">
+                                        <input type="color" id="textColor" th:field="*{textColor}"/>
+                                        <output th:for="textColor" th:text="*{textColor}">#1f2937</output>
+                                    </div>
+                                    <span class="error" th:if="${#fields.hasErrors('textColor')}" th:errors="*{textColor}">错误</span>
+                                </div>
+                                <div class="field">
+                                    <label for="mutedTextColor">次要文字色</label>
+                                    <div class="color-row">
+                                        <input type="color" id="mutedTextColor" th:field="*{mutedTextColor}"/>
+                                        <output th:for="mutedTextColor" th:text="*{mutedTextColor}">#6b7280</output>
+                                    </div>
+                                    <span class="error" th:if="${#fields.hasErrors('mutedTextColor')}" th:errors="*{mutedTextColor}">错误</span>
+                                </div>
+                            </div>
+
+                            <div class="form-grid form-grid--2">
+                                <div class="field">
+                                    <label for="headingFont">标题字体</label>
+                                    <select id="headingFont" th:field="*{headingFont}">
+                                        <option th:each="f : ${fontOptions}" th:value="${f.value}" th:text="${f.label}">系统无衬线</option>
+                                    </select>
+                                </div>
+                                <div class="field">
+                                    <label for="bodyFont">正文字体</label>
+                                    <select id="bodyFont" th:field="*{bodyFont}">
+                                        <option th:each="f : ${fontOptions}" th:value="${f.value}" th:text="${f.label}">系统无衬线</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-grid form-grid--2">
+                                <div class="field">
+                                    <label for="baseFontSize">正文字号</label>
+                                    <div class="range-row">
+                                        <input type="range" id="baseFontSize" th:field="*{baseFontSize}"
+                                               min="12" max="26" step="1"/>
+                                        <output th:for="baseFontSize" th:text="*{baseFontSize} + ' px'">17 px</output>
+                                    </div>
+                                    <span class="error" th:if="${#fields.hasErrors('baseFontSize')}" th:errors="*{baseFontSize}">错误</span>
+                                </div>
+                                <div class="field">
+                                    <label for="contentWidth">内容宽度</label>
+                                    <div class="range-row">
+                                        <input type="range" id="contentWidth" th:field="*{contentWidth}"
+                                               min="560" max="1600" step="20"/>
+                                        <output th:for="contentWidth" th:text="*{contentWidth} + ' px'">780 px</output>
+                                    </div>
+                                    <span class="error" th:if="${#fields.hasErrors('contentWidth')}" th:errors="*{contentWidth}">错误</span>
+                                </div>
+                                <div class="field">
+                                    <label for="cornerRadius">圆角</label>
+                                    <div class="range-row">
+                                        <input type="range" id="cornerRadius" th:field="*{cornerRadius}"
+                                               min="0" max="40" step="1"/>
+                                        <output th:for="cornerRadius" th:text="*{cornerRadius} + ' px'">14 px</output>
+                                    </div>
+                                    <span class="error" th:if="${#fields.hasErrors('cornerRadius')}" th:errors="*{cornerRadius}">错误</span>
+                                </div>
+                            </div>
+
+                            <div class="form-grid form-grid--2">
+                                <label class="check-row" for="stickyHeader">
+                                    <input type="checkbox" id="stickyHeader" th:field="*{stickyHeader}"/>
+                                    <span>顶栏吸顶</span>
+                                </label>
+                                <label class="check-row" for="showHero">
+                                    <input type="checkbox" id="showHero" th:field="*{showHero}"/>
+                                    <span>首页显示大标题与简介</span>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="card">
+                        <h2>自定义 CSS</h2>
+                        <div class="field">
+                            <label for="customCss">追加在主题变量之后的 CSS</label>
+                            <textarea id="customCss" th:field="*{customCss}" rows="7" class="code"
+                                      placeholder=".post-card { border-left: 3px solid var(--cxh-primary); }"></textarea>
+                            <span class="hint">
+                                可用变量：<code>--cxh-primary</code>、<code>--cxh-accent</code>、<code>--cxh-bg</code>、
+                                <code>--cxh-surface</code>、<code>--cxh-text</code>、<code>--cxh-muted</code>、
+                                <code>--cxh-radius</code>、<code>--cxh-content-width</code>。
+                            </span>
+                            <span class="error" th:if="${#fields.hasErrors('customCss')}" th:errors="*{customCss}">错误</span>
+                        </div>
+                    </section>
+
+                    <div class="form-actions">
+                        <button class="btn" type="submit">保存外观</button>
+                        <a class="btn btn--ghost" th:href="@{/admin/appearance}">放弃修改</a>
+                        <span class="muted small">保存后全站立即生效。</span>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 右侧：真实首页预览 -->
+            <aside class="appearance-preview">
+                <div class="card" style="padding:14px;">
+                    <div class="page-head" style="margin-bottom:10px;">
+                        <div>
+                            <h2 style="margin:0;font-size:1rem;">实时预览</h2>
+                            <p class="muted small" style="margin:2px 0 0;">加载的是真实首页，编辑时自动刷新</p>
+                        </div>
+                        <button class="btn btn--ghost btn--sm" type="button" id="preview-refresh">刷新</button>
+                    </div>
+                    <div class="frame-wrap">
+                        <iframe id="preview-frame" th:src="@{/}" title="站点预览"></iframe>
+                    </div>
+                    <p class="muted small" style="margin:10px 0 0;">
+                        预览不落库：只有点「保存外观」或「套用预置」才会写回数据库。
+                    </p>
+                </div>
+            </aside>
+        </div>
+    </main>
+</div>
+
+<script th:src="@{/js/appearance.js}" defer="defer"></script>
+</body>
+</html>

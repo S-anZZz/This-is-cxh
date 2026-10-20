@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!--
+  后台骨架。刻意<b>不</b>使用前台主题变量：
+  即使把前台风格调成极端配色，后台依然保持可读可操作。
+-->
+<head th:fragment="head(pageTitle)">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="|${pageTitle} · 后台|">后台</title>
+    <!-- AJAX 请求所需的 CSRF 令牌（Spring Security 默认开启 CSRF 防护） -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <link rel="icon" type="image/svg+xml" th:href="@{/images/favicon.svg}"/>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+</head>
+
+<body>
+
+<aside class="sidebar" th:fragment="sidebar(activeNav)">
+    <div class="sidebar__brand">
+        <span class="sidebar__mark">c</span>
+        <div>
+            <strong>cxh 后台</strong>
+            <small th:text="${site?.siteTitle} ?: '博客管理'">站点</small>
+        </div>
+    </div>
+
+    <nav class="sidebar__nav">
+        <a th:href="@{/admin}" th:classappend="${activeNav == 'dashboard'} ? 'active'">概览</a>
+        <a th:href="@{/admin/posts}" th:classappend="${activeNav == 'posts'} ? 'active'">文章管理</a>
+        <a th:href="@{/admin/appearance}" th:classappend="${activeNav == 'appearance'} ? 'active'">外观设置</a>
+        <a th:href="@{/}" target="_blank" rel="noopener">查看站点 ↗</a>
+    </nav>
+
+    <div class="sidebar__foot">
+        <p class="muted small">
+            已登录：<span sec:authentication="name">admin</span>
+        </p>
+        <form th:action="@{/logout}" method="post">
+            <button class="btn btn--ghost btn--block" type="submit">退出登录</button>
+        </form>
+    </div>
+</aside>
+
+<div class="flash" th:fragment="flash" th:if="${flash != null}" th:text="${flash}">已保存</div>
+
+</body>
+</html>
