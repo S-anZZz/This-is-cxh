@@ -35,7 +35,7 @@ warn() { printf '\033[1;33m[注意] %s\033[0m\n' "$1"; }
 die()  { printf '\033[1;31m[失败] %s\033[0m\n' "$1" >&2; exit 1; }
 
 [ "$(id -u)" = "0" ] || die "请用 root 执行：sudo bash deploy/vps/install.sh"
-[ -f "$JAR" ] || die "找不到 jar：$JAR（先在本地执行 ./mvnw clean package，再把 jar 传上来）"
+[ -f "$JAR" ] || die "找不到 jar：${JAR}（先在本地执行 ./mvnw clean package，再把 jar 传上来）"
 
 # ---------------------------------------------------------------- 1 依赖
 log "安装依赖"
@@ -66,7 +66,7 @@ log "已安装 jar（$(du -h "$APP_DIR/cxh-blog.jar" | cut -f1)）"
 log "准备运行环境变量"
 DB_PASSWORD=""
 if [ -f "$ENV_FILE" ]; then
-    log "已存在 $ENV_FILE，保留原配置"
+    log "已存在 ${ENV_FILE}，保留原配置"
     DB_PASSWORD="$(grep -E '^DB_PASSWORD=' "$ENV_FILE" | head -1 | cut -d= -f2- || true)"
     ADMIN_PASSWORD="$(grep -E '^CXH_ADMIN_PASSWORD=' "$ENV_FILE" | head -1 | cut -d= -f2- || true)"
 else
@@ -75,7 +75,7 @@ else
     cp "$HERE/cxh-blog.env.example" "$ENV_FILE"
     sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=$DB_PASSWORD|" "$ENV_FILE"
     sed -i "s|^CXH_ADMIN_PASSWORD=.*|CXH_ADMIN_PASSWORD=$ADMIN_PASSWORD|" "$ENV_FILE"
-    warn "已生成随机口令，请立即记录（稍后可改：$ENV_FILE）"
+    warn "已生成随机口令，请立即记录（稍后可改：${ENV_FILE}）"
     printf '    后台账号: admin\n    后台口令: %s\n    数据库口令: %s\n' "$ADMIN_PASSWORD" "$DB_PASSWORD"
 fi
 chown root:cxh "$ENV_FILE"

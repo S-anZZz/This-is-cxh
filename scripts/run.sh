@@ -36,7 +36,7 @@ ensure_jar() {
     if [ -f "$JAR" ]; then
         return
     fi
-    echo "未找到 $JAR，先用 Maven Wrapper 构建（首次会下载依赖，请稍候）…"
+    echo "未找到 ${JAR}，先用 Maven Wrapper 构建（首次会下载依赖，请稍候）…"
     ./mvnw -B -ntp package -DskipTests
 }
 

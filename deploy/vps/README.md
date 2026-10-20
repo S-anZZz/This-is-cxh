@@ -143,7 +143,28 @@ echo '0 3 * * * cd /opt/cxh-blog && BACKUP_DIR=/var/backups/cxh bash /opt/cxh-bl
 
 ---
 
-## 6. 验证清单
+## 6. 旧站内容迁移（可选）
+
+旧站那 7 篇「锡鸿网 / 一个广西小伙的河南奇遇记」已提取为 Markdown，放在
+`content/legacy/`（序章 + 第一~五章 + 好站推荐），图片复用工程里已有的相册资源
+（`/images/gallery/...`），因此无需额外上传。
+
+导入命令（在服务器上，装好并启动之后执行）：
+
+```bash
+cd /opt/cxh-blog
+PASS='后台口令' scripts/import-posts.sh
+# 或指定地址与目录
+BASE=http://127.0.0.1:8080 USER=admin PASS='后台口令' DIR=content/legacy scripts/import-posts.sh
+```
+
+脚本会：登录后台 → 逐篇发布（标题/标签/摘要取自文件头部的 front matter）→ 同名文章自动跳过（可重复执行）。
+
+导入后访问 `/archive` 即可看到全部章节；需要调整顺序或分类，直接在后台改即可。
+
+---
+
+## 7. 验证清单
 
 - [ ] `curl -s https://cxh327.dpdns.org/actuator/health` 返回 `{"status":"UP"}`
 - [ ] 首页、文章列表、详情、标签、归档、搜索都能打开

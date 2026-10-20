@@ -805,6 +805,27 @@ def build():
         ],
         widths=[2.4, 7.0, 5.6])
 
+    m.h("6.6 旧站内容迁移", level=2)
+    m.p("从旧静态站切换到本系统时，历史文章可以批量导入。本项目把旧站内容提取成了"
+        "带 front matter 的 Markdown（content/legacy/），并用脚本调用后台接口逐篇发布，"
+        "既不依赖后台手工逐条粘贴，也不引入额外的导入格式。")
+    m.code(
+        "# 在服务器上（应用已启动）\n"
+        "cd /opt/cxh-blog\n"
+        "PASS='后台口令' scripts/import-posts.sh\n\n"
+        "# 也可指定地址与目录\n"
+        "BASE=http://127.0.0.1:8080 USER=admin PASS=xxx DIR=content/legacy scripts/import-posts.sh"
+    )
+    m.table(
+        ["要点", "说明"],
+        [
+            ["文件格式", "--- 包裹的 title / tags / summary + 正文 Markdown"],
+            ["重复执行", "按标题判重，已存在的文章自动跳过"],
+            ["图片", "引用工程内已有的 /images/gallery/ 资源，无需重复上传"],
+            ["失败可见", "每篇打印结果，任一失败返回非 0 退出码"],
+        ],
+        widths=[2.6, 12.4])
+
     # ---------------- 7 用户手册 ----------------
     m.h("7 用户操作手册", level=1)
 

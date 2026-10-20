@@ -66,7 +66,7 @@ backup_mysql_docker() {
 backup_h2() {
     local data_dir="$ROOT/data"
     if [ ! -d "$data_dir" ]; then
-        log "没有找到 H2 数据目录 $data_dir，跳过"
+        log "没有找到 H2 数据目录 ${data_dir}，跳过"
         return 1
     fi
     if [ -f "$data_dir/cxh-blog.lock.db" ]; then
@@ -91,7 +91,7 @@ backup_uploads() {
         return
     fi
     if [ ! -d "$dir" ]; then
-        log "没有上传目录 $dir，跳过"
+        log "没有上传目录 ${dir}，跳过"
         return
     fi
     log "备份上传图片"
