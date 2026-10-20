@@ -64,7 +64,7 @@ fi
   cloudflared tunnel login
   cloudflared tunnel create $TUNNEL"
 TUNNEL_ID="$(basename "$CRED" .json)"
-log "隧道 ID: $TUNNEL_ID（凭据 $CRED）"
+log "隧道 ID: ${TUNNEL_ID}（凭据 ${CRED}）"
 
 # 端口占用检查（排除本服务自己在跑的情况）
 if lsof -nP -iTCP:"$APP_PORT" -sTCP:LISTEN >/dev/null 2>&1; then
@@ -83,7 +83,7 @@ chmod 700 "$RUNTIME"
 
 # jar：优先用刚构建的 target/cxh-blog.jar
 JAR_SRC="$PROJECT/target/cxh-blog.jar"
-[ -f "$JAR_SRC" ] || die "找不到 $JAR_SRC，请先执行：./mvnw clean package -DskipTests"
+[ -f "$JAR_SRC" ] || die "找不到 ${JAR_SRC}，请先执行：./mvnw clean package -DskipTests"
 install -m 644 "$JAR_SRC" "$RUNTIME/cxh-blog.jar"
 log "已安装 jar（$(du -h "$RUNTIME/cxh-blog.jar" | cut -f1)）"
 
@@ -99,8 +99,9 @@ else
 fi
 
 if [ -f "$ENV_FILE" ]; then
-    log "已存在 $ENV_FILE，保留原配置"
-    ADMIN_PASSWORD="$(grep -E '^CXH_ADMIN_PASSWORD=' "$ENV_FILE" | head -1 | cut -d= -f2- || true)"
+    log "已存在 ${ENV_FILE}，保留原配置"
+    # 回读时去掉外层引号，避免把 "xxx" 连引号一起打印
+    ADMIN_PASSWORD="$(grep -E '^CXH_ADMIN_PASSWORD=' "$ENV_FILE" | head -1 | cut -d= -f2- | sed -e 's/^"//' -e 's/"$//' || true)"
 else
     ADMIN_PASSWORD="$(openssl rand -base64 24 | tr -dc 'A-Za-z0-9' | head -c 16)"
     cat > "$ENV_FILE" <<EOF
@@ -116,7 +117,7 @@ JAVA_OPTS="-Xmx512m -Duser.timezone=Asia/Shanghai -Djava.awt.headless=true"
 CXH_KEEP_AWAKE=1
 EOF
     chmod 600 "$ENV_FILE"
-    warn "已生成后台口令，请立即记录（之后可改 $ENV_FILE）"
+    warn "已生成后台口令，请立即记录（之后可改 ${ENV_FILE}）"
     printf '    后台地址: http://127.0.0.1:%s/admin\n    账号: admin\n    口令: %s\n' "$APP_PORT" "$ADMIN_PASSWORD"
 fi
 chmod 600 "$ENV_FILE"
@@ -137,8 +138,18 @@ EOF
 chmod 600 "$CF_CONFIG"
 
 log "注册 DNS 路由（$DOMAIN → 隧道）"
-"$CF_BIN" tunnel route dns "$TUNNEL" "$DOMAIN" 2>&1 | sed 's/^/    /' || \
-    warn "DNS 路由可能已存在；若站点打不开，请到 Cloudflare 面板确认记录指向 ${TUNNEL_ID}.cfargotunnel.com 且为橙云"
+# 该名字上若已有 A/AAAA/CNAME（例如此前指向 GitHub Pages），Cloudflare 不允许同名 CNAME 共存，
+# 此时需要用 --overwrite-dns 覆盖。cloudflared 在"已配置正确"时返回 0，失败时也不一定非 0，
+# 因此按输出内容判断，而不是只看退出码。
+ROUTE_OUT="$("$CF_BIN" tunnel route dns "$TUNNEL" "$DOMAIN" 2>&1)" || true
+printf '%s\n' "$ROUTE_OUT" | sed 's/^/    /'
+case "$ROUTE_OUT" in
+    *"Failed to add route"*|*"already exists"*)
+        warn "$DOMAIN 上已有其他 DNS 记录，将用隧道路由覆盖（原记录会失效）"
+        "$CF_BIN" tunnel route dns --overwrite-dns "$TUNNEL" "$DOMAIN" 2>&1 | sed 's/^/    /' || \
+            die "DNS 路由失败，请到 Cloudflare 面板手工添加：$DOMAIN CNAME ${TUNNEL_ID}.cfargotunnel.com（橙云）"
+        ;;
+esac
 
 # ---------------------------------------------------------------- 3 launchd
 log "安装 launchd 服务"

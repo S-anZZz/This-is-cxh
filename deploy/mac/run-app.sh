@@ -13,7 +13,7 @@ PROJECT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$PROJECT"
 
 ENV_FILE="$PROJECT/runtime/env"
-[ -f "$ENV_FILE" ] || { echo "[cxh] 缺少 $ENV_FILE，请先运行 deploy/mac/install.sh" >&2; exit 1; }
+[ -f "$ENV_FILE" ] || { echo "[cxh] 缺少 ${ENV_FILE}，请先运行 deploy/mac/install.sh" >&2; exit 1; }
 # shellcheck disable=SC1090
 set -a; . "$ENV_FILE"; set +a
 
@@ -28,7 +28,7 @@ fi
 [ -n "$JAVA" ] && [ -x "$JAVA" ] || { echo "[cxh] 找不到可用的 java" >&2; exit 1; }
 
 JAR="$PROJECT/runtime/cxh-blog.jar"
-[ -f "$JAR" ] || { echo "[cxh] 缺少 $JAR，请先运行 deploy/mac/install.sh" >&2; exit 1; }
+[ -f "$JAR" ] || { echo "[cxh] 缺少 ${JAR}，请先运行 deploy/mac/install.sh" >&2; exit 1; }
 
 echo "[cxh] 启动: $JAVA ${JAVA_OPTS:--Xmx512m} -jar $JAR (工作目录 $PROJECT)"
 
