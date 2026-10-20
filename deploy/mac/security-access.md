@@ -52,3 +52,44 @@
 - Access 只保护你指定的路径。`/`、`/posts/**`、`/uploads/**` 等公开内容不受影响。
 - 万一 Access 配错把自己锁在外面：在 Zero Trust → Applications 里临时禁用该应用即可恢复。
 - Access 与博客自身登录是两套独立机制，互不影响；退出 Access 需要清浏览器会话或等待 24 小时过期。
+
+---
+
+## 附：本项目已完成的实际配置（2026-10-20）
+
+通过 Cloudflare API 完成，配置如下：
+
+| 项 | 值 |
+| --- | --- |
+| 组织名 | `cxh-blog` |
+| 团队域 | `raspy-pond-db06.cloudflareaccess.com` |
+| 身份提供方 | One-time PIN（邮箱验证码） |
+| 受保护应用 1 | `cxh327.dpdns.org/admin`（session 24h） |
+| 受保护应用 2 | `cxh327.dpdns.org/login`（session 24h） |
+| 放行策略 | `allow` + 邮箱 `2027652229@qq.com` |
+
+验证结果（从公网实测）：
+
+```
+GET /admin        → 302 https://raspy-pond-db06.cloudflareaccess.com/cdn-cgi/access/login/...
+GET /admin/posts  → 302 同上
+GET /login        → 302 同上
+GET /             → 200（公开内容不受影响）
+GET /posts /archive /tags /search /theme.css /feed.xml /sitemap.xml → 全部 200
+```
+
+首次登录流程：
+
+1. 打开 `https://cxh327.dpdns.org/admin`
+2. 跳转到 Cloudflare Access，输入邮箱 `2027652229@qq.com`
+3. 收邮件里的 6 位验证码并填入（24 小时内免重复验证）
+4. 再输入博客自己的后台账号口令
+
+> 如果第 3 步没收到邮件，检查垃圾箱；仍不行就在 Zero Trust → Settings → Authentication 里确认
+> One-time PIN 处于启用状态。
+
+### 安全提醒
+
+配置时使用的 API Token 请**用完后立即吊销**：
+Cloudflare → My Profile → API Tokens → 找到该 Token → Delete。
+吊销后不影响已建好的 Access 应用。
