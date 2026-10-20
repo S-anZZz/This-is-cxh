@@ -26,3 +26,6 @@ logs/
 # 系统
 .DS_Store
 Thumbs.db
+
+# 部署用的 SSH 私钥（绝不入库）
+.deploy-keys/
