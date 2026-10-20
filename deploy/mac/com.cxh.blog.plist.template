@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- 由 deploy/mac/install.sh 生成，占位符 @PROJECT@ / @LABEL@ 会被替换 -->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>@LABEL@</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>@PROJECT@/deploy/mac/run-app.sh</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>@PROJECT@</string>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>ThrottleInterval</key>
+    <integer>10</integer>
+    <key>StandardOutPath</key>
+    <string>@PROJECT@/logs/mac-app.log</string>
+    <key>StandardErrorPath</key>
+    <string>@PROJECT@/logs/mac-app.err.log</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <key>LANG</key>
+        <string>zh_CN.UTF-8</string>
+    </dict>
+</dict>
+</plist>

@@ -29,3 +29,9 @@ Thumbs.db
 
 # 部署用的 SSH 私钥（绝不入库）
 .deploy-keys/
+
+# 本地工具（cloudflared 等二进制）
+.tools/
+
+# Mac 运行时（jar 副本、env、数据）
+runtime/
