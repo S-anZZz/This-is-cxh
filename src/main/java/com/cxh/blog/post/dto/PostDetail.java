@@ -23,7 +23,8 @@ public record PostDetail(
         String updatedAtText,
         long views,
         int readingMinutes,
-        boolean draft) {
+        boolean draft,
+        String authorName) {
 
     public static PostDetail from(Post post, String summary, String contentHtml) {
         return new PostDetail(
@@ -40,6 +41,7 @@ public record PostDetail(
                 DateTimes.toDate(post.getUpdatedAt()),
                 post.getViews(),
                 ReadingTimes.of(post.getContentMarkdown()),
-                post.getStatus() == PostStatus.DRAFT);
+                post.getStatus() == PostStatus.DRAFT,
+                post.getAuthor() == null ? null : post.getAuthor().displayName());
     }
 }

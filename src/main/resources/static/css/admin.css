@@ -282,3 +282,107 @@ textarea.code { font-family: var(--a-mono); font-size: .85rem; }
 }
 
 .upload-row label.btn { cursor: pointer; margin: 0; }
+
+/* ---------- 配色盘 ---------- */
+
+.palette-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+    gap: 10px;
+    margin: 4px 0 14px;
+}
+
+.palette-card {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid var(--a-border);
+    border-radius: var(--a-radius);
+    background: var(--a-bg);
+    cursor: pointer;
+    text-align: left;
+    transition: border-color .15s ease, transform .15s ease;
+}
+
+.palette-card:hover {
+    border-color: var(--a-primary);
+    transform: translateY(-1px);
+}
+
+.palette-card:focus-visible {
+    outline: 2px solid var(--a-primary);
+    outline-offset: 2px;
+}
+
+.palette-card__swatches {
+    display: flex;
+    gap: 4px;
+}
+
+.palette-card__swatches i {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 1px solid var(--a-border);
+}
+
+.palette-card__name {
+    font-size: .86rem;
+    color: var(--a-text);
+}
+
+.palette-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* ---------- 登录 / 注册 ---------- */
+
+.login-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 18px 0 12px;
+    color: var(--a-muted);
+    font-size: .82rem;
+}
+
+.login-divider::before,
+.login-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--a-border);
+}
+
+.login-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.login-actions .btn { flex: 1; }
+
+.captcha-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.captcha-row input { flex: 1; min-width: 120px; }
+
+.captcha-row img {
+    border: 1px solid var(--a-border);
+    border-radius: var(--a-radius);
+    display: block;
+}
+
+.flash--ok {
+    background: rgba(34, 197, 94, .12);
+    border-color: rgba(34, 197, 94, .35);
+    color: var(--a-text);
+}

@@ -24,11 +24,14 @@ public class SecurityConfig {
             "/theme.css", "/css/**", "/js/**", "/images/**", "/favicon.ico",
             "/uploads/**",
             "/feed.xml", "/sitemap.xml", "/robots.txt",
-            "/login", "/error"
+            "/login", "/register", "/captcha", "/login/code/**", "/error"
     };
 
     /** 需要管理员身份的后台/接口路径（上传接口走这里，而不是混进公开白名单）。 */
     private static final String[] ADMIN_PATHS = {"/admin/**", "/api/**"};
+
+    /** 需要「已登录」但不限角色：发文与点赞。 */
+    private static final String[] AUTHENTICATED_PATHS = {"/write", "/write/**", "/posts/*/like"};
 
     /** 开发用的 H2 控制台；生产库不启用该路径，因此不会被暴露。 */
     private static final String[] DEV_CONSOLE_PATHS = {"/h2-console/**"};
@@ -64,6 +67,7 @@ public class SecurityConfig {
                         .requestMatchers(PUBLIC_PATHS).permitAll()
                         .requestMatchers(DEV_CONSOLE_PATHS).permitAll()
                         .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers(AUTHENTICATED_PATHS).authenticated()
                         .requestMatchers(ADMIN_PATHS).hasRole("ADMIN")
                         .anyRequest().denyAll())
                 .formLogin(form -> form

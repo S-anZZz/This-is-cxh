@@ -60,10 +60,15 @@ cxh:
     thumbnail-size: 560
     upload-enabled: true
   admin:
-    # 生产环境请通过环境变量覆盖：export CXH_ADMIN_PASSWORD='...'
+    # 管理员账号在首次启动时写入数据库；口令用环境变量覆盖：export CXH_ADMIN_PASSWORD='...'
     username: ${CXH_ADMIN_USERNAME:admin}
-    password: ${CXH_ADMIN_PASSWORD:cxh@2024}
+    password: ${CXH_ADMIN_PASSWORD:123456}
     display-name: 站长
+  auth:
+    # 邮箱验证码有效期（秒）
+    code-ttl-seconds: 300
+    # 未配置 SMTP 时把验证码回显在页面上，便于个人部署自测；接入真实邮件后请设为 false
+    dev-show-code: ${CXH_AUTH_DEV_SHOW_CODE:true}
   seed:
     # 首次启动写入示例文章，方便直接看到效果
     enabled: true

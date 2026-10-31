@@ -5,6 +5,7 @@ import com.cxh.blog.post.domain.PostStatus;
 import com.cxh.blog.post.dto.PostDetail;
 import com.cxh.blog.post.dto.PostForm;
 import com.cxh.blog.post.dto.PostStats;
+import com.cxh.blog.user.domain.AppUser;
 import com.cxh.blog.post.dto.PostSummary;
 import java.util.List;
 
@@ -49,6 +50,9 @@ public interface PostService {
     PostForm findForm(Long id);
 
     PostDetail save(PostForm form);
+
+    /** 以某个用户身份保存（新建时记录作者）。 */
+    PostDetail save(PostForm form, AppUser author);
 
     void delete(Long id);
 

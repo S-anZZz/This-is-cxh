@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head('写文章')}"></head>
+<body>
+<header th:replace="~{layout/base :: header}"></header>
+
+<main class="container">
+    <section class="hero">
+        <h1 class="hero__title">写文章</h1>
+        <p class="hero__subtitle">发布后会立即出现在文章列表里，作者记为你的账号。</p>
+    </section>
+
+    <div class="flash" th:if="${flash}" th:text="${flash}">提示</div>
+
+    <form th:action="@{/write}" th:object="${form}" method="post" class="card write-card">
+        <div class="field">
+            <label for="title">标题</label>
+            <input type="text" id="title" th:field="*{title}" placeholder="给这篇文章起个名字"/>
+            <span class="error" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">错误</span>
+        </div>
+        <div class="field">
+            <label for="summary">摘要（可选）</label>
+            <input type="text" id="summary" th:field="*{summary}" placeholder="列表里展示的一句话"/>
+        </div>
+        <div class="field">
+            <label for="tagsText">标签（可选）</label>
+            <input type="text" id="tagsText" th:field="*{tagsText}" placeholder="用逗号或顿号分隔，最多 8 个"/>
+        </div>
+        <div class="field">
+            <label for="contentMarkdown">正文（Markdown）</label>
+            <textarea id="contentMarkdown" th:field="*{contentMarkdown}" rows="18" class="code"
+                      placeholder="# 标题&#10;&#10;支持 **加粗**、`代码`、表格与代码块。"></textarea>
+            <span class="error" th:if="${#fields.hasErrors('contentMarkdown')}" th:errors="*{contentMarkdown}">错误</span>
+        </div>
+        <div class="form-actions">
+            <button class="btn" type="submit">发表</button>
+            <a class="btn btn--ghost" th:href="@{/posts}">取消</a>
+        </div>
+    </form>
+</main>
+
+<footer th:replace="~{layout/base :: footer}"></footer>
+</body>
+</html>

@@ -1,10 +1,14 @@
 package com.cxh.blog.post.domain;
 
 import com.cxh.blog.common.text.Slugs;
+import com.cxh.blog.user.domain.AppUser;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -68,6 +72,11 @@ public class Post {
     @CollectionTable(name = "post_tag", joinColumns = @JoinColumn(name = "post_id"))
     @Column(name = "tag", length = Tags.MAX_TAG_LENGTH)
     private Set<String> tags = new LinkedHashSet<>();
+
+    /** 作者：注册用户发表的文章会记录作者；后台与种子数据可为空。 */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id")
+    private AppUser author;
 
     @Column(name = "published_at")
     private Instant publishedAt;
@@ -187,5 +196,16 @@ public class Post {
 
     public Instant getUpdatedAt() {
         return updatedAt;
+    }
+
+    public AppUser getAuthor() {
+        return author;
+    }
+
+    /** 只允许在新建时指定作者，避免编辑时被改写。 */
+    public void assignAuthor(AppUser author) {
+        if (this.author == null) {
+            this.author = author;
+        }
     }
 }

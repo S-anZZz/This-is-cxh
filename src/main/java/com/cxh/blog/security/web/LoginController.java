@@ -19,11 +19,12 @@ public class LoginController {
                         Authentication authentication,
                         Model model) {
         if (isAuthenticated(authentication)) {
-            return "redirect:/admin";
+            // 已登录时不再展示登录页：按角色回到各自首页（管理员由成功处理器决定进后台）
+            return "redirect:/";
         }
         model.addAttribute("loginError", error != null);
         model.addAttribute("loggedOut", logout != null);
-        return "admin/login";
+        return "auth/login";
     }
 
     private boolean isAuthenticated(Authentication authentication) {

@@ -1,7 +1,13 @@
 package com.cxh.blog.post.web;
 
+import java.util.Optional;
+import com.cxh.blog.like.repository.PostLikeRepository;
+import com.cxh.blog.post.dto.PostDetail;
 import com.cxh.blog.post.service.PostService;
+import com.cxh.blog.user.domain.AppUser;
+import com.cxh.blog.user.service.UserService;
 import org.springframework.stereotype.Controller;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,9 +24,15 @@ public class PostPublicController {
     private static final int SEARCH_PAGE_SIZE = 10;
 
     private final PostService postService;
+    private final PostLikeRepository likeRepository;
+    private final UserService userService;
 
-    public PostPublicController(PostService postService) {
+    public PostPublicController(PostService postService,
+                                PostLikeRepository likeRepository,
+                                UserService userService) {
         this.postService = postService;
+        this.likeRepository = likeRepository;
+        this.userService = userService;
     }
 
     @GetMapping("/posts")
@@ -33,10 +45,22 @@ public class PostPublicController {
     }
 
     @GetMapping("/posts/{slug}")
-    public String detail(@PathVariable String slug, Model model) {
-        model.addAttribute("post", postService.getPublishedBySlug(slug));
+    public String detail(@PathVariable String slug, Model model, Authentication authentication) {
+        PostDetail detail = postService.getPublishedBySlug(slug);
+        model.addAttribute("post", detail);
         model.addAttribute("activeNav", "posts");
+        model.addAttribute("likeCount", likeRepository.countByPostId(detail.id()));
+        model.addAttribute("liked", currentUser(authentication)
+                .map(user -> likeRepository.existsByPostIdAndUserId(detail.id(), user.getId()))
+                .orElse(false));
         return "post";
+    }
+
+    private Optional<AppUser> currentUser(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return Optional.empty();
+        }
+        return userService.findByLogin(authentication.getName());
     }
 
     @GetMapping("/tags")

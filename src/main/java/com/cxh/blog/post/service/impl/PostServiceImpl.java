@@ -11,6 +11,7 @@ import com.cxh.blog.post.domain.SearchKeyword;
 import com.cxh.blog.post.dto.PostDetail;
 import com.cxh.blog.post.dto.PostForm;
 import com.cxh.blog.post.dto.PostStats;
+import com.cxh.blog.user.domain.AppUser;
 import com.cxh.blog.post.dto.PostSummary;
 import com.cxh.blog.post.repository.PostRepository;
 import com.cxh.blog.post.service.PostService;
@@ -138,6 +139,12 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public PostDetail save(PostForm form) {
+        return save(form, null);
+    }
+
+    @Override
+    @Transactional
+    public PostDetail save(PostForm form, AppUser author) {
         PostDraft draft = form.toDraft();
         Post post;
         if (form.isNew()) {
@@ -146,6 +153,9 @@ public class PostServiceImpl implements PostService {
             post = postRepository.findById(form.getId())
                     .orElseThrow(() -> new ResourceNotFoundException("文章不存在：" + form.getId()));
             post.applyEdit(withUniqueSlug(draft, post.getId()));
+        }
+        if (author != null) {
+            post.assignAuthor(author);
         }
         Post saved = postRepository.save(post);
         return toDetail(saved);
