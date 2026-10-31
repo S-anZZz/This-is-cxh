@@ -83,7 +83,7 @@ java -jar target/cxh-blog.jar
 
 **外观自由编辑**（本项目重点）
 
-- 6 套预置主题，点一下立即套用整套配色与字体
+- 7 套预置主题，点一下立即套用整套配色与字体
 - 6 个颜色令牌：主色、辅助色、页面背景、卡片背景、正文字色、次要文字色
 - 标题字体 / 正文字体分别选择（服务端白名单字体栈，不请求外部字体）
 - 排版：正文字号、内容宽度、圆角、顶栏吸顶、首页 Hero 开关
@@ -241,7 +241,7 @@ public void injectSiteProfile(Model model) {
 
 | 需求 | 需要改动的地方 |
 | --- | --- |
-| 新增一套预置主题 | 在 `ThemePreset` 加一个枚举常量（含 6 个色值 + 2 个字体） |
+| 新增一套预置主题 | 在 `ThemePreset` 加一个枚举常量（6 个色值 + 2 个字体），再补一条 Flyway 迁移把新值加进 `chk_theme_preset` |
 | 新增一种字体 | 在 `FontChoice` 加一个枚举常量 |
 | 新增一个风格维度（例如「密度」） | `ThemeTokens` 加字段 → `SiteProfileForm` 加字段与校验 → `CssVariablesThemeStyleRenderer.variables()` 加一个变量 → `appearance.html` 加一个控件 |
 | 换掉渲染方式（例如输出 JSON 给构建期） | 换一个 `ThemeStyleRenderer` 实现即可，模板与业务代码不动 |
@@ -383,7 +383,7 @@ scripts/acceptance-test.sh           # 110 条端到端验收用例（自动起�
 | `PostTest` | 5 | 标签解析（含中文分隔符与空格标签）、slug 生成、发布状态与时间、阅读量、非法标题被拒 |
 | `SearchKeywordTest` | 4 | LIKE 通配符（`%` `_` `!`）转义、长度截断、空白规范化、纯符号关键词不触发查询 |
 | `AdminUserDetailsServiceTest` | 4 | 明文口令加密、BCrypt 摘要、`{bcrypt}` 前缀、未知账号被拒 |
-| `SiteProfileServiceTest` | 5 | 默认档案自举、编辑落库与快照刷新、预览不落库、套用预置保留排版参数、非法颜色不落库 |
+| `SiteProfileServiceTest` | 6 | 默认档案自举、编辑落库与快照刷新、预览不落库、套用预置保留排版参数、非法颜色不落库 |
 | `PostServiceTest` | 10 | 保存与渲染、slug 唯一性、草稿隔离、阅读量累加、标签检索、**搜索命中与通配符防御**、分页防御、删除、编辑复用记录 |
 | `SeedDataTest` | 5 | 首启动写入 5 篇示例文章、相册渲染出缩略图与原图链接、内容可检索、站点档案自举、种子幂等 |
 | `PublicPagesTest` | 12 | 首页 / 列表 / 详情 / 标签 / 归档 / 关于 / 搜索可渲染、`/theme.css` 输出与缓存头、**样式级联顺序守卫**、头像按配置渲染/清除、相册图片与缩略图随包可访问、关键词 HTML 转义、404 页面、后台未登录跳转、登录页可匿名访问 |

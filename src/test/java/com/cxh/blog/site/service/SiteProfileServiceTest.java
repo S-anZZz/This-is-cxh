@@ -93,6 +93,20 @@ class SiteProfileServiceTest {
     }
 
     @Test
+    @DisplayName("每个预置主题都能真正落库（防止新增枚举漏加 Flyway 迁移）")
+    void everyPresetCanBePersisted() {
+        // theme_preset 列上有数据库 CHECK 约束：只往枚举里加值、却没补迁移时，
+        // 保存新预设会抛 Check constraint violation（线上表现为切预设返回 409）。
+        for (ThemePreset preset : ThemePreset.values()) {
+            SiteProfileView applied = siteProfileService.applyPreset(preset);
+
+            assertThat(applied.theme().getPreset())
+                    .as("预置 %s 应能保存并通过数据库约束", preset)
+                    .isEqualTo(preset);
+        }
+    }
+
+    @Test
     @DisplayName("非法颜色值不会写入数据库")
     void rejectsIllegalColor() {
         SiteProfileForm form = siteProfileService.currentForm();

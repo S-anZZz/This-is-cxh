@@ -3,7 +3,9 @@ package com.cxh.blog.site.domain;
 /**
  * 预置主题。每个预置自带一整套默认风格值，是"一键换风格"的唯一数据源。
  *
- * <p>新增主题只需在此追加枚举常量，无需改动任何模板或服务代码（开闭原则）。
+ * <p>新增主题：在此追加枚举常量即可，模板与服务代码都不用动（开闭原则）。
+ * 但 {@code site_profile.theme_preset} 上有数据库 CHECK 约束，因此还需补一条
+ * Flyway 迁移把新值纳入 {@code chk_theme_preset}（见 V2__relax_theme_preset_check.sql 的写法）。
  */
 public enum ThemePreset {
 
@@ -18,7 +20,11 @@ public enum ThemePreset {
     FOREST_GREEN("森林绿", "#15803d", "#a16207", "#f3f7f2", "#ffffff", "#1b2e21", "#61705f",
             FontChoice.HUMANIST_SANS, FontChoice.MODERN_SERIF),
     MONO_PRINT("打字稿", "#111827", "#dc2626", "#fafafa", "#ffffff", "#111827", "#6b7280",
-            FontChoice.MONO, FontChoice.MONO);
+            FontChoice.MONO, FontChoice.MONO),
+    // 参考本机 Hello Kitty 皮肤的樱花粉：深玫红做主色保证链接可读，
+    // 亮粉只放在 accent（装饰与渐变），避免浅粉文字对比度不足。
+    SAKURA_PINK("樱花粉", "#d6336c", "#ff7db4", "#fff8fb", "#ffffff", "#4a2f39", "#8a6b76",
+            FontChoice.HUMANIST_SANS, FontChoice.HUMANIST_SANS);
 
     private final String label;
     private final String primaryColor;
