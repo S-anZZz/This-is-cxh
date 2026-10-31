@@ -47,6 +47,10 @@ spring:
       cache:
         period: 0
 
+  # 邮件服务：**默认不配置**。需要真发验证码时用环境变量注入：
+  #   MAIL_HOST=smtp.qq.com MAIL_PORT=465 MAIL_USERNAME=you@qq.com MAIL_PASSWORD=授权码
+  # 刻意不写 host 的空默认值：空值也会让 Spring 创建 JavaMailSender，
+  # 进而触发邮件健康检查，把 /actuator/health 判成 DOWN。
 server:
   port: ${SERVER_PORT:8080}
   # 反向代理后能正确推导出站点地址（RSS / sitemap 的绝对链接依赖它）
@@ -81,6 +85,10 @@ management:
   endpoint:
     health:
       show-details: never
+  health:
+    mail:
+      # 邮件是旁路能力：SMTP 不可用不该让整站被判成不健康
+      enabled: false
 
 logging:
   level:

@@ -116,8 +116,8 @@ public class AuthController {
         }
         String code = verificationCodeService.issue(normalized);
         redirectAttributes.addFlashAttribute("codeSent", normalized);
-        if (authProperties.isDevShowCode()) {
-            // 没有 SMTP 时把验证码回显，方便个人部署自测
+        // 只有确认「没有发出真实邮件」时才回显，避免收得到邮件的人反而看到明文
+        if (authProperties.isDevShowCode() && !verificationCodeService.deliversRealMail()) {
             redirectAttributes.addFlashAttribute("devCode", code);
         }
         return "redirect:/login";

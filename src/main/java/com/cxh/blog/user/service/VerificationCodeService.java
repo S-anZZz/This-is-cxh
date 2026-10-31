@@ -24,11 +24,18 @@ public class VerificationCodeService {
     private static final int MAX_ATTEMPTS = 5;
 
     private final AuthProperties properties;
+    private final CodeSender codeSender;
     private final SecureRandom random = new SecureRandom();
     private final Map<String, Entry> codes = new ConcurrentHashMap<>();
 
-    public VerificationCodeService(AuthProperties properties) {
+    public VerificationCodeService(AuthProperties properties, CodeSender codeSender) {
         this.properties = properties;
+        this.codeSender = codeSender;
+    }
+
+    /** 是否走真实邮件：决定要不要把验证码回显到页面。 */
+    public boolean deliversRealMail() {
+        return codeSender.deliversRealMail();
     }
 
     /** 生成并投递验证码，返回明文（仅在开发模式下给页面回显用）。 */
@@ -63,8 +70,7 @@ public class VerificationCodeService {
     }
 
     private void deliver(String email, String code) {
-        // 没有 SMTP 时的降级：写到日志，配合 dev-show-code 在页面上显示
-        log.info("邮箱登录验证码 email={} code={}（未配置 SMTP，仅写日志）", email, code);
+        codeSender.send(email, code);
     }
 
     private String normalize(String email) {
