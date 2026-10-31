@@ -37,11 +37,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
-        <!-- 邮箱验证码：只有配置了 spring.mail.host 才会真正发信，未配置时降级为写日志 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
-        </dependency>
 
         <!-- 持久化：JPA 抽象，H2 / MySQL 通过 profile 切换 -->
         <dependency>

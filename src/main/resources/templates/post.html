@@ -11,7 +11,7 @@
                 <time th:text="${post.publishedAtText}">2024-01-01</time>
                 <span th:text="|${post.readingMinutes} 分钟阅读|">5 分钟阅读</span>
                 <span th:text="|${post.views} 次浏览|">10 次浏览</span>
-            <span th:if="${post.authorName}" th:text="|作者：${post.authorName}|">作者</span></div>
+            </div>
             <h1 class="article__title" th:text="${post.title}">标题</h1>
             <div class="tag-cloud">
                 <a class="tag" th:each="tag : ${post.tags}" th:href="@{/tags/{t}(t=${tag})}" th:text="${tag}">标签</a>
@@ -23,15 +23,6 @@
 
         <!-- 正文 HTML 由 MarkdownRenderer 生成并已转义原始 HTML -->
         <div class="article__body prose" th:utext="${post.contentHtml}">正文</div>
-
-        <!-- 点赞：POST + 重定向，未登录会被安全配置引导到登录页 -->
-        <form class="like-bar" th:action="@{/posts/{slug}/like(slug=${post.slug})}" method="post">
-            <button type="submit" class="like-btn" th:classappend="${liked} ? 'is-liked'">
-                <span th:text="${liked} ? '已点赞' : '点赞'">点赞</span>
-                <span class="like-btn__count" th:text="${likeCount}">0</span>
-            </button>
-            <a class="like-bar__hint small muted" th:href="@{/register}" th:if="${!liked}">注册后可点赞</a>
-        </form>
 
         <hr/>
         <p class="muted small">

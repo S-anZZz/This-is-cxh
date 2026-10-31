@@ -20,7 +20,11 @@ public enum ThemePreset {
     FOREST_GREEN("森林绿", "#15803d", "#a16207", "#f3f7f2", "#ffffff", "#1b2e21", "#61705f",
             FontChoice.HUMANIST_SANS, FontChoice.MODERN_SERIF),
     MONO_PRINT("打字稿", "#111827", "#dc2626", "#fafafa", "#ffffff", "#111827", "#6b7280",
-            FontChoice.MONO, FontChoice.MONO);
+            FontChoice.MONO, FontChoice.MONO),
+    // 参考本机 Hello Kitty 皮肤的樱花粉：深玫红做主色保证链接可读，
+    // 亮粉只放在 accent（装饰与渐变），避免浅粉文字对比度不足。
+    SAKURA_PINK("樱花粉", "#d6336c", "#ff7db4", "#fff8fb", "#ffffff", "#4a2f39", "#8a6b76",
+            FontChoice.HUMANIST_SANS, FontChoice.HUMANIST_SANS);
 
     private final String label;
     private final String primaryColor;

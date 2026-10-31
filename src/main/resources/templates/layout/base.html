@@ -25,23 +25,7 @@
 
 <body>
 
-<!--
-  留白处的花朵：纯 SVG + CSS 动画，不依赖任何前端构建，也不加载视频。
-  笔画用 stroke-dashoffset 逐段“画出”，观感是缓慢生长；
-  颜色取 currentColor（即 --cxh-primary），所以换主题会跟着变色。
-  aria-hidden：纯装饰，读屏器忽略。
--->
-<th:block th:fragment="header">
-<div class="cxh-bloom" aria-hidden="true">
-    <svg class="cxh-bloom__art cxh-bloom__art--left" viewBox="0 0 220 340" fill="none">
-        <g th:replace="~{layout/base :: bloomFlower}"></g>
-    </svg>
-    <svg class="cxh-bloom__art cxh-bloom__art--right" viewBox="0 0 220 340" fill="none">
-        <g th:replace="~{layout/base :: bloomFlower}"></g>
-    </svg>
-</div>
-
-<header class="site-header">
+<header class="site-header" th:fragment="header">
     <div class="container site-header__inner">
         <a class="brand" th:href="@{/}">
             <span class="brand__mark" th:text="${#strings.substring(site.authorName,0,1)}">c</span>
@@ -61,21 +45,6 @@
         </nav>
     </div>
 </header>
-</th:block>
-
-<!-- 单朵花的路径（左右两个 svg 共用，避免模板里重复几十行） -->
-<g th:fragment="bloomFlower">
-    <path class="cxh-bloom__stem" d="M110 340 C110 292 106 250 110 214"/>
-    <path class="cxh-bloom__leaf" d="M110 286 C78 276 64 254 62 230 C90 236 104 256 110 286Z"/>
-    <path class="cxh-bloom__leaf" d="M110 258 C142 250 156 230 158 208 C132 214 116 232 110 258Z"/>
-    <path class="cxh-bloom__petal" d="M110 214 C110 182 92 164 110 140 C128 164 110 182 110 214Z"/>
-    <path class="cxh-bloom__petal" d="M110 214 C78 208 60 190 58 166 C84 172 102 192 110 214Z"/>
-    <path class="cxh-bloom__petal" d="M110 214 C142 208 160 190 162 166 C136 172 118 192 110 214Z"/>
-    <path class="cxh-bloom__petal" d="M110 214 C104 182 110 158 128 142 C132 170 124 194 110 214Z"/>
-    <path class="cxh-bloom__petal" d="M110 214 C116 182 110 158 92 142 C88 170 96 194 110 214Z"/>
-    <circle class="cxh-bloom__core" cx="110" cy="214" r="7"/>
-</g>
-
 
 <footer class="site-footer" th:fragment="footer">
     <div class="container site-footer__inner">

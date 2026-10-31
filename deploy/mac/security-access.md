@@ -64,7 +64,8 @@
 | 组织名 | `cxh-blog` |
 | 团队域 | `raspy-pond-db06.cloudflareaccess.com` |
 | 身份提供方 | One-time PIN（邮箱验证码） |
-| 受保护应用 | `cxh327.dpdns.org/admin`（session 24h） |
+| 受保护应用 1 | `cxh327.dpdns.org/admin`（session 24h） |
+| 受保护应用 2 | `cxh327.dpdns.org/login`（session 24h） |
 | 放行策略 | `allow` + 邮箱 `2027652229@qq.com` |
 
 验证结果（从公网实测）：
@@ -72,7 +73,7 @@
 ```
 GET /admin        → 302 https://raspy-pond-db06.cloudflareaccess.com/cdn-cgi/access/login/...
 GET /admin/posts  → 302 同上
-GET /login        → 200（**已移出保护**，见下方说明）
+GET /login        → 302 同上
 GET /             → 200（公开内容不受影响）
 GET /posts /archive /tags /search /theme.css /feed.xml /sitemap.xml → 全部 200
 ```
@@ -86,17 +87,6 @@ GET /posts /archive /tags /search /theme.css /feed.xml /sitemap.xml → 全部 2
 
 > 如果第 3 步没收到邮件，检查垃圾箱；仍不行就在 Zero Trust → Settings → Authentication 里确认
 > One-time PIN 处于启用状态。
-
-### 为什么 `/login` 后来又移出了保护
-
-加入「注册 + 登录」功能后，`/login` 变成了**面向所有访客**的入口。
-若继续用 Access 保护它，普通用户会被 Cloudflare 的邮箱验证拦在门外，根本到不了登录页。
-因此只保留 `/admin` 受保护：
-
-- 管理员访问 `/admin` → 先过 Access 邮箱验证 → 再输博客账号口令；
-- 普通用户访问 `/login` → 直接输用户名/邮箱 + 密码，或邮箱验证码登录。
-
-这也顺带解释了为什么管理员口令可以设得简单：**后台入口本身还有 Access 这一层**。
 
 ### 安全提醒
 
